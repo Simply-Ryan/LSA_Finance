@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Quoted
+{% endblock %}
+
+{% block main %}
+
+    <h1>Stock Quote</h1>
+
+    {% if quote %}
+        <p>The price of one share of {{ quote["symbol"] }} is {{ quote["price"] | usd }}</p>
+    {% else %}
+        <p>Invalid symbol or unable to fetch quote. Please try again.</p>
+    {% endif %}
+
+    <a href="/quote" class="btn btn-primary">Get Another Quote</a>
+
+{% endblock %}
