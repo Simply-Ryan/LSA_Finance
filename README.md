@@ -3,4 +3,3 @@ REQUIREMENTS:
 - Flask
 - SQLite3
 - CS50 Library
-- Live Server
