@@ -1,5 +1,5 @@
 REQUIREMENTS:
 - Python3
-- Flask
-- SQLite3
-- CS50 Library
+- Flask (pip install flask)
+- SQLite3 (pip install sqlite3)
+- CS50 Library (pip install cs50)
