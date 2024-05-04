@@ -1,11 +1,13 @@
+# <a class="btn btn-primary"> BOOTSTRAP
+
 # Imports
-import os
 from cs50 import SQL
-from flask import Flask, flash, redirect, render_template, request, session
+from flask import Flask, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import apology, login_required, lookup, usd
 
+# Setup
 app = Flask(__name__)
 app.jinja_env.filters["usd"] = usd
 app.config["SESSION_PERMANENT"] = False
@@ -124,7 +126,6 @@ def quote():
         return render_template("quoted.html", quote=quote_result)
     else:
         return render_template("quote.html")
-
 
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
