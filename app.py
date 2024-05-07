@@ -223,8 +223,8 @@ def edit():
         return apology("must enter a numerical value", 403)
     
     db.execute("UPDATE users SET cash = ?", amount)
+    db.execute("DELETE FROM history WHERE user_id = ?", session["user_id"])
     return redirect("/")    
-
 
 
 @app.route("/logout")
