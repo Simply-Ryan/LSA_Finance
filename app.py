@@ -211,6 +211,22 @@ def history():
     return render_template("history.html", transactions=transactions)
 
 
+@app.route("/edit", methods=["GET", "POST"])
+@login_required
+def edit():
+    if request.method == "GET":
+        return render_template("edit.html")
+    
+    try:
+        amount = int(request.form.get("amount"))
+    except ValueError:
+        return apology("must enter a numerical value", 403)
+    
+    db.execute("UPDATE users SET cash = ?", amount)
+    return redirect("/")    
+
+
+
 @app.route("/logout")
 def logout():
     session.clear()

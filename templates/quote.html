@@ -16,9 +16,4 @@
         <button type="submit" class="btn btn-primary">Get Quote</button>
     </form>
 
-    {% if quote %}
-        <h2>Quote for {{ quote["symbol"] }}</h2>
-        <p>Price: {{ quote["price"] | usd }}</p>
-    {% endif %}
-
 {% endblock %}
