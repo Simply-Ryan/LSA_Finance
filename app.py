@@ -117,15 +117,17 @@ def register():
 @app.route("/quote", methods=["GET", "POST"])
 @login_required
 def quote():
-    if request.method == "POST":
-        if not request.form.get("symbol"):
-            return apology("must provide stock symbol", 400)
-        quote_result = lookup(request.form.get("symbol"))
-        if not quote_result:
-            return apology("stock symbol not found", 400)
-        return render_template("quoted.html", quote=quote_result)
-    else:
-        return render_template("quote.html")
+    return render_template("quote.html")
+
+
+@app.route("/quoted")
+def quoted():
+    if not request.args.get("symbol"):
+        return apology("must provide stock symbol", 400)
+    quote_result = lookup(request.args.get("symbol"))
+    if not quote_result:
+        return apology("stock symbol not found", 400)
+    return render_template("quoted.html", quote=quote_result)
 
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
