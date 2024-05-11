@@ -9,21 +9,22 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th scope="col">Transaction Date</th>
-                <th scope="col">Stock</th>
-                <th scope="col">Shares</th>
-                <th scope="col">Price (Unit)</th>
-                <th scope="col">Total Price</th>
+                <th scope="col">Type</th>
+                <th scope="col">Sender</th>
+                <th scope="col">Receiver</th>
+                <th scope="col">Symbol</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Unit Value</th>
+                <th scope="col">Total Value</th>
+                <th scope="col">Date</th>
             </tr>
         </thead>
         <tbody>
-            {% for transaction in transactions %}
+            {% for event in history %}
                 <tr>
-                    <td>{{ transaction['timestamp'] }}</td>
-                    <td>{{ transaction['symbol'] }}</td>
-                    <td>{{ transaction['shares'] }}</td>
-                    <td>{{ transaction['price'] }}</td>
-                    <td>{{ transaction['shares'] * transaction['price'] }}</td>
+                    {% for element in event %}
+                    <td>{{ element }}</td>
+                    {% endfor %}
                 </tr>
             {% endfor %}
         </tbody>

@@ -4,8 +4,9 @@ import pytz
 import requests
 import urllib
 import uuid
+import sqlite3
 
-from flask import redirect, render_template, request, session
+from flask import redirect, render_template, request, session, g
 from functools import wraps
 
 
@@ -33,27 +34,57 @@ def apology(message, code=400):
 
     return render_template("apology.html", top=code, bottom=escape(message)), code
 
+
 def login_required(f):
     """
     Decorate routes to require login.
-
-    https://flask.palletsprojects.com/en/latest/patterns/viewdecorators/
     """
-
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if session.get("user_id") is None:
+        if "user_id" not in session or session["user_id"] is None:
             return redirect("/login")
         return f(*args, **kwargs)
 
     return decorated_function
 
 
+def using_database(function):
+    @wraps(function)
+    def decorated_function(*args, **kwargs):
+        def get_db():
+            if 'db' not in g:
+                g.db = sqlite3.connect('database.db')
+            return g.db
+
+        def close_db(e=None):
+            db = g.pop('db', None)
+            if db is not None:
+                db.close()
+
+        db = get_db()
+        try:
+            return function(db, *args, **kwargs)
+        finally:
+            close_db()
+
+    return decorated_function
+
+
+def check_form(fields):
+    for field in fields:
+        if not field:
+            return False
+    return True
+
+
 def lookup(symbol):
     """Look up quote for symbol."""
 
     # Prepare API request
-    symbol = symbol.upper()
+    try:
+        symbol = symbol.upper()
+    except ValueError:
+        return None
     end = datetime.datetime.now(pytz.timezone("US/Eastern"))
     start = end - datetime.timedelta(days=7)
 

@@ -13,14 +13,14 @@
             <label for="symbol" class="form-label">Stock Symbol</label>
             <select class="form-select" id="symbol" name="symbol" required>
                 <option value="" selected disabled>Select a stock</option>
-                {% for holding in holdings %}
-                    <option value="{{ holding['symbol'] }}">{{ holding['symbol'] }}</option>
+                {% for stock in holdings %}
+                    <option value="{{ stock[0] }}">{{ stock[0] }}</option>
                 {% endfor %}
             </select>
         </div>
         <div class="mb-3">
-            <label for="shares" class="form-label">Number of Shares</label>
-            <input type="number" class="form-control" id="shares" name="shares" placeholder="Amount" min="1" required>
+            <label for="amount" class="form-label">Number of Shares</label>
+            <input type="number" class="form-control" id="amount" name="amount" placeholder="Amount" min="1" required>
         </div>
         <button type="submit" class="btn btn-danger">Sell</button>
     </form>

@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block main %}
+
+    <h1>Portfolio</h1>
+
+    <p>Cash Balance: {{ user_balance | usd }}</p>
+
+    <table class="table">
+        <thead>
+            <tr><th>Symbol</th><th>Amount</th><th>Unit Price</th><th>Total Price</th><th>Buy Time</th><th>Delta</th></tr>
+        </thead>
+        <tbody>
+            {% for holding in holdings %}
+                <tr>
+                    <td>{{ holding[0] }}</td>
+                    <td>{{ holding[1] }}</td>
+                    <td>{{ holding[2] | usd }}</td>
+                    <td>{{ holding[3] | usd }}</td>
+                    <td>{{ holding[4] }}</td>
+                    <td>{{ holding[5] | usd }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p>Net Portfolio Value: {{ net_value | usd }}</p>
+
+{% endblock %}
