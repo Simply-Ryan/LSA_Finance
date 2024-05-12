@@ -134,12 +134,6 @@ def login(connected):
     
     return redirect("/home")
 
-@app.route("/logout")
-@login_required
-def logout():
-    session.clear()
-    return redirect("/login")
-
 @app.route("/home")
 @login_required
 @using_database
@@ -317,4 +311,35 @@ def history(connected):
 
     return render_template("history.html", history=history)
 
-# TODO
+# User settings
+@app.route("/settings")
+@login_required
+@using_database
+def settings(connected):
+    db = connected.cursor()
+
+    # Get output as dictionary
+    db.row_factory = sqlite3.Row
+    profile = dict(db.execute("SELECT first_name, last_name, username FROM users WHERE id = ?", [session["user_id"]]).fetchone())
+    # Revert
+    db.row_factory = sqlite3.Row
+
+    return render_template("settings.html", profile=profile)
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/login")
+
+@app.route("/delete_account")
+@login_required
+@using_database
+def delete_account(connected):
+    db = connected.cursor()
+    db.execute("DELETE FROM history WHERE user_id = ?", [session["user_id"]])
+    db.execute("DELETE FROM stocks WHERE user_id = ?", [session["user_id"]])
+    db.execute("DELETE FROM accounts WHERE user_id = ?", [session["user_id"]])
+    db.execute("DELETE FROM users WHERE id = ?", [session["user_id"]])
+    connected.commit()
+    session.clear()
+    return redirect("/register")

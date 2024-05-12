@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Settings
+{% endblock %}
+
+{% block main %}
+    <style>
+        .left_align {
+            text-align: left;
+        }
+    </style>
+
+    <h1>Settings</h1>
+
+    <h3 class="left_align">Profile</h3>
+    <div class="left_align">First Name: {{ profile["first_name"] }}</div>
+    <div class="left_align">Last Name: {{ profile["last_name"] }}</div>
+    <div class="left_align">Username: {{ profile["username"] }}</div>
+
+    <br>
+
+    <h3 class="left_align">Preferences</h3>
+    <div class="left_align">
+        <button class="btn btn-dark" id="toggle-theme" onclick="toggleTheme()">Toggle theme</button>
+    </div>
+
+    <br>
+
+    <h3 class="left_align">Other</h3>
+    <form class="left_align" action="/logout">
+        <button class="btn btn-warning" type="submit">Log Out</button>
+    </form>
+    <br>
+    <form class="left_align" action="/delete_account">
+        <button class="btn btn-danger" type="submit">Delete Account</button>
+    </form>
+{% endblock %}
