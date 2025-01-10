@@ -7,11 +7,32 @@
 {% block main %}
     <form action="/login" method="post">
         <div class="mb-3">
-            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="username" placeholder="Username" type="text">
+            <input autocomplete="off" autofocus class="form-control mx-auto col-6" id="username" name="username" placeholder="Username" type="text">
         </div>
         <div class="mb-3">
-            <input class="form-control mx-auto w-auto" id="password" name="password" placeholder="Password" type="password">
+            <!-- Input Group for the password -->
+            <div class="input-group mx-auto col-6">
+                <input class="form-control" id="password" name="password" placeholder="Password" type="password">
+                <button type="button" id="togglePassword" class="input-group-text" aria-label="Show password">
+                    <i class="fa fa-eye"></i> <!-- Font Awesome Eye icon -->
+                </button>
+            </div>
         </div>
         <button class="btn btn-success" type="submit">Log In</button>
     </form>
+
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            const passwordField = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            // Toggle the password visibility
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            
+            // Toggle the eye icon (open and closed)
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        });
+    </script>
 {% endblock %}

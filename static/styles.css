@@ -13,3 +13,77 @@ nav .navbar-brand .red
 {
     color: #ea433b;
 }
+
+/* THEME */
+
+/* Light Mode */
+body.light-mode {
+    background-color: white;
+    color: black;
+}
+
+/* Dark Mode [BROKEN] */
+body.dark-mode {
+    background-color: #232323;
+    color: white;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none;  /* Hidden by default */
+    position: fixed;  /* Fixed position */
+    z-index: 1;  /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;  /* Full width */
+    height: 100%;  /* Full height */
+    background-color: rgba(0, 0, 0, 0.4);  /* Semi-transparent background */
+    display: flex;  /* Use flexbox for centering */
+    justify-content: center;  /* Horizontally center */
+    align-items: center;  /* Vertically center */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fff;  /* White background for visibility */
+    color: #000;  /* Black text for contrast */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;  /* Modal width */
+    max-width: 500px;  /* Limit max width */
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* Optional shadow for better visual */
+}
+
+/* Cancel modal button */
+#cancelBtn {
+    background-color: red;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Confirm button (optional styling for consistency) */
+#confirmBtn {
+    background-color: green;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Button hover effect */
+#cancelBtn:hover,
+#confirmBtn:hover {
+    opacity: 0.8;
+}
+
+/* TABLE SECTION */
+/* Table row hover */
+table tr:hover {
+    background-color: #537fbe;
+}

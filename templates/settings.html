@@ -22,7 +22,11 @@
 
     <h3 class="left_align">Preferences</h3>
     <div class="left_align">
-        <button class="btn btn-dark" id="toggle-theme" onclick="toggleTheme()">Toggle theme</button>
+        <!-- Checkbox; confirmation modal for buying/selling stocks -->
+        <label for="buyConfirmation">Buy Confirmation</label>
+        <input type="checkbox" id="buyConfirmation">
+         
+        <button class="btn btn-dark" id="theme-toggle" onclick="toggleTheme()">Toggle theme</button>
     </div>
 
     <br>
@@ -35,4 +39,43 @@
     <form class="left_align" action="/delete_account">
         <button class="btn btn-danger" type="submit">Delete Account</button>
     </form>
+
+    <script>
+        // THEME SECTION
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            let body = document.body;
+            if (body.classList.contains('light-mode')) {
+                body.classList.remove('light-mode');
+                body.classList.add('dark-mode');
+            } else {
+                body.classList.remove('dark-mode');
+                body.classList.add('light-mode');
+            }
+
+            // Save the preference in localStorage
+            localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
+        });
+
+        // CONFIRMATION MODAL SECTION
+        const buyConfirmationCheckbox = document.getElementById('buyConfirmation');
+
+        // Load the saved setting from localStorage when the page loads
+        window.addEventListener('load', () => {
+            const buyConfirmationEnabled = localStorage.getItem('confirmModal');
+            
+            // Set the checkbox state based on the stored value
+            if (buyConfirmationEnabled === 'true') {
+                buyConfirmationCheckbox.checked = true;
+            } else {
+                buyConfirmationCheckbox.checked = false;
+            }
+        });
+
+        // Listen for changes to the checkbox
+        buyConfirmationCheckbox.addEventListener('change', (event) => {
+            // Save the current state to localStorage
+            const isChecked = event.target.checked;
+            localStorage.setItem('confirmModal', isChecked.toString());
+        });
+    </script>
 {% endblock %}

@@ -8,7 +8,10 @@
 
     <h1>Stock Price</h1>
 
-    <p>The price of a single share of {{ quote["symbol"] }} is {{ quote["price"] | usd }}</p>
+    <p>
+        The price of a single share of {{ quote["symbol"] }} is {{ quote["price"] | usd }}
+        <!-- Volume: {{quote["volume"]}} -->
+    </p>
     <br>
     <div class="graph"><a href="https://finance.yahoo.com/quote/{{ quote['symbol'] }}">Check graph</a></div>
     <br>

@@ -55,8 +55,41 @@ db.execute("""
         unit_value NUMERIC NOT NULL,
         total_value NUMERIC NOT NULL,
         date_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (sender_id) REFERENCES users(id)
+        FOREIGN KEY (sender_id) REFERENCES users(id),
         FOREIGN KEY (receiver_id) REFERENCES users(id)
+    )
+""")
+
+db.execute("""
+    CREATE TABLE IF NOT EXISTS requests (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        type TEXT,
+        sender_id INTEGER NOT NULL,
+        receiver_id INTEGER NOT NULL,
+        date_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (sender_id) REFERENCES users(id),
+        FOREIGN KEY (receiver_id) REFERENCES users(id)
+    )
+""")
+
+# LEAGUE TABLE: id, owner_id, name, description
+
+db.execute("""
+    CREATE TABLE IF NOT EXISTS leagues (
+           id INTEGER PRIMARY KEY AUTOINCREMENT,
+           owner_id TEXT NOT NULL,
+           name TEXT NOT NULL,
+           description TEXT
+    )
+""")
+
+# LEAGUE MEMBERS TABLE: user_id, league_id
+db.execute("""
+    CREATE TABLE IF NOT EXISTS league_members (
+           user_id INTEGER NOT NULL,
+           league_id INTEGER NOT NULL,
+           FOREIGN KEY (user_id) REFERENCES users(id),
+           FOREIGN KEY (league_id) REFERENCES leagues(id)
     )
 """)
 
@@ -145,14 +178,23 @@ def home(connected):
     holdings = db.execute("SELECT symbol, amount, unit_value, total_value, buy_time FROM stocks WHERE user_id = ?", [session["user_id"]]).fetchall()
     net_value = user_balance
 
-    # Convert tuples to lists and perform calculations
     holdings = [list(stock) for stock in holdings]
 
     for stock in holdings:
         stock.append(stock[3] - (stock[1] * lookup(stock[0])["price"]))  # Total Buy Price - Total Current Price (Total Profit/Loss)
         net_value += stock[2] * stock[1]  # Buy Price * Amount
 
-    return render_template("home.html", user_balance=user_balance, holdings=holdings, net_value=net_value)
+    # Rendering requests
+    requests = db.execute("SELECT type, sender_id, date_time FROM requests WHERE receiver_id = ?", [session["user_id"]]).fetchall()
+    
+    # Replace IDs by usernames
+    requests = [list(request) for request in requests]
+
+    for request in requests:
+        user_name = db.execute("SELECT username FROM users WHERE id = ?", [request[1]]).fetchone()
+        request[1] = user_name
+
+    return render_template("home.html", user_balance=user_balance, holdings=holdings, net_value=net_value, requests=requests)
 
 
 # Edit user balance (Paper Trade)
@@ -204,7 +246,11 @@ def quoted():
 @using_database
 def buy(connected):
     if request.method == "GET":
-        return render_template("buy.html")
+        # Get user balance
+        db = connected.cursor()
+        db_request = db.execute("SELECT balance FROM accounts WHERE user_id = ?", [session["user_id"]]).fetchone()
+        user_balance = int(db_request[0])
+        return render_template("buy.html", userBalance=user_balance)
     
     # Check fields
     try:
@@ -231,7 +277,8 @@ def buy(connected):
     if not already_owned or already_owned[1] != stock["price"]:
         db.execute("INSERT INTO stocks (user_id, symbol, amount, unit_value, total_value) VALUES (?, ?, ?, ?, ?)", (session["user_id"], stock["symbol"], amount, stock["price"], total_price))
     else:
-        db.execute("UPDATE stocks SET amount = ?", (int(already_owned[0]) + amount))
+        db.execute("UPDATE stocks SET amount = ? WHERE user_id = ? AND symbol = ?", (int(already_owned[0]) + amount, session["user_id"], stock["symbol"]))
+    
     db.execute("INSERT INTO history (type, sender_id, receiver_id, symbol, amount, unit_value, total_value) VALUES (?, ?, ?, ?, ?, ?, ?)", ("Buy", session["user_id"], session["user_id"], stock["symbol"], amount, stock["price"], total_price))
     connected.commit()
 
@@ -310,6 +357,45 @@ def history(connected):
         history[i] = event  # Assign the modified list back to the history list
 
     return render_template("history.html", history=history)
+
+@app.route("/friends/add", methods=["GET", "POST"])
+@login_required
+@using_database
+def add_friend(connected):
+    if request.method == "GET":
+        return render_template("add_friend.html")
+
+    # Send friend request  
+    receiver_id = db.execute("SELECT id FROM users WHERE username = ?", [request.form.get("username")]).fetchone()  
+    if not receiver_id:
+        return apology("User does not exist", 403)
+    
+    db.execute("INSERT INTO requests (type, sender_id, receiver_id) VALUES (?, ?, ?)", ("Friend Request", session["user_id"], receiver_id[0]))
+    connected.commit()
+
+    return redirect("/home")
+
+
+@app.route("/leagues/create", methods=["GET", "POST"])
+@login_required
+@using_database
+def create_league(connected):
+    if request.method == "GET":
+        return render_template("create_league.html")
+    
+    # Check form validity
+    # TODO
+
+@app.route("/leagues/join", methods=["GET", "POST"])
+@login_required
+@using_database
+def join_league(connected):
+    if request.method == "GET":
+        return render_template("join_league.html")
+    
+    # Check form validity
+    # TODO
+
 
 # User settings
 @app.route("/settings")

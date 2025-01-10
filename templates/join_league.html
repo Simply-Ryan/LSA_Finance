@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Join League
+{% endblock %}
+
+{% block main %}
+    <h1>Join a league</h1>
+
+    <form action="/leagues/join" method="post">
+        <div class="mb-3">
+            <label for="symbol" class="form-label">League ID</label>
+            <input type="text" class="form-control" id="league_id" name="league_id" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Join</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Join League
+{% endblock %}
+
+{% block main %}
+    <h1>Join a league</h1>
+
+    <form action="/leagues/create" method="post">
+        <div class="mb-3">
+            <label for="name" class="form-label">League Name</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">League Description</label>
+            <input type="text" class="form-control" id="description" name="description" placeholder="(Optional)" required>
+        </div>
+        <div class="mb-3">
+            <label for="invite" class="form-label">Invite Friends</label>
+            <input type="text" class="form-control" id="invite" name="invite" placeholder="(Optional)" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Dynamically render friends with search
+        });
+    </script>
+{% endblock %}

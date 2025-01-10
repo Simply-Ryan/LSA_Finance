@@ -6,9 +6,15 @@
 
 {% block main %}
 
-    <h1>Portfolio</h1>
+    <h1>Home</h1>
+
+    <br>
 
     <p>Cash Balance: {{ user_balance | usd }}</p>
+
+    <br>
+
+    <h3>Portfolio</h3>
 
     <table class="table">
         <thead>
@@ -28,6 +34,39 @@
         </tbody>
     </table>
 
+    <br>
+
     <p>Net Portfolio Value: {{ net_value | usd }}</p>
+
+    <br>
+
+    <h3>Requests</h3>
+
+    <table class="table">
+        <thead>
+            <tr><th>Type</th><th>Sender</th><th>Date</th><th>Response</th></tr>
+        </thead>
+        <tbody>
+            {% for request in requests %}
+                <tr>
+                    <td>{{ request[0] }}</td>
+                    <td>{{ request[1] }}</td>
+                    <td>{{ request[2] }}</td>
+                    <td>
+                        <form action="/friends/accept" method="post">
+                            <input type="hidden" name="sender" value="{{ request[0] }}">
+                            <input type="hidden" name="amount" value="{{ request[1] }}">
+                            <button class="btn btn-success" type="submit">✓</button>
+                        </form>
+                        <form action="/friends/reject" method="post">
+                            <input type="hidden" name="sender" value="{{ request[0] }}">
+                            <input type="hidden" name="amount" value="{{ request[1] }}">
+                            <button class="btn btn-danger" type="submit">X</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
 {% endblock %}

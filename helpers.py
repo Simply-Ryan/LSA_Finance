@@ -5,10 +5,16 @@ import requests
 import urllib
 import uuid
 import sqlite3
+import json
+
+# Stock Market API
+import finnhub
 
 from flask import redirect, render_template, request, session, g
 from functools import wraps
 
+api_key = "cu05qhpr01ql96gpu91gcu05qhpr01ql96gpu920"
+finnhub_client = finnhub.Client(api_key)
 
 def apology(message, code=400):
     """Render message as an apology to user."""
@@ -76,7 +82,6 @@ def check_form(fields):
             return False
     return True
 
-
 def lookup(symbol):
     """Look up quote for symbol."""
 
@@ -85,32 +90,16 @@ def lookup(symbol):
         symbol = symbol.upper()
     except ValueError:
         return None
-    end = datetime.datetime.now(pytz.timezone("US/Eastern"))
-    start = end - datetime.timedelta(days=7)
+    
+    # Request data from Finnhub
+    data = finnhub_client.quote(symbol)
+    #data = json.loads(request)
 
-    # Yahoo Finance API
-    url = (
-        f"https://query1.finance.yahoo.com/v7/finance/download/{urllib.parse.quote_plus(symbol)}"
-        f"?period1={int(start.timestamp())}"
-        f"&period2={int(end.timestamp())}"
-        f"&interval=1d&events=history&includeAdjustedClose=true"
-    )
+    price = data['c']
+    # volume = data['data'][0]['v']
+    quote = {"price": price, "symbol": symbol}
 
-    # Query API
-    try:
-        response = requests.get(
-            url,
-            cookies={"session": str(uuid.uuid4())},
-            headers={"Accept": "*/*", "User-Agent": request.headers.get("User-Agent")},
-        )
-        response.raise_for_status()
-
-        # CSV header: Date,Open,High,Low,Close,Adj Close,Volume
-        quotes = list(csv.DictReader(response.content.decode("utf-8").splitlines()))
-        price = round(float(quotes[-1]["Adj Close"]), 2)
-        return {"price": price, "symbol": symbol}
-    except (KeyError, IndexError, requests.RequestException, ValueError):
-        return None
+    return quote
 
 
 def usd(value):
