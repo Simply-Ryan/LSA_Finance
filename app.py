@@ -13,6 +13,10 @@ Session(app)
 connection = sqlite3.connect("database.db")
 db = connection.cursor()
 
+# TO MANUALLY ADD/DELETE USERS: DELETE THEM FROM ALL DATABASES
+# EXAMPLE: DELETE FROM users WHERE id = X;
+# DELETE FROM accounts WHERE user_id = X; (repeat for all databases except history)
+
 db.execute("""
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,7 +32,7 @@ db.execute("""
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
         balance NUMERIC DEFAULT 1000.00,
-        FOREIGN KEY (user_id) REFERENCES users(id)
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )
 """)
 
@@ -40,7 +44,7 @@ db.execute("""
         unit_value NUMERIC NOT NULL,
         total_value NUMERIC NOT NULL,
         buy_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES user(id)
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )
 """)
 
@@ -60,6 +64,7 @@ db.execute("""
     )
 """)
 
+# REQUESTS TABLE: id, type, sender_id, receiver_id, date_time
 db.execute("""
     CREATE TABLE IF NOT EXISTS requests (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -73,7 +78,6 @@ db.execute("""
 """)
 
 # LEAGUE TABLE: id, owner_id, name, description
-
 db.execute("""
     CREATE TABLE IF NOT EXISTS leagues (
            id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -88,10 +92,26 @@ db.execute("""
     CREATE TABLE IF NOT EXISTS league_members (
            user_id INTEGER NOT NULL,
            league_id INTEGER NOT NULL,
-           FOREIGN KEY (user_id) REFERENCES users(id),
+           FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
            FOREIGN KEY (league_id) REFERENCES leagues(id)
     )
 """)
+
+# FRIENDSHIPS TABLE: user1_id, user2_id, date_time
+db.execute("""
+    CREATE TABLE IF NOT EXISTS friendships (
+        user1_id INTEGER NOT NULL,
+        user2_id INTEGER NOT NULL,
+        date_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user1_id) REFERENCES users(id),
+        FOREIGN KEY (user2_id) REFERENCES users(id),
+        PRIMARY KEY (user1_id, user2_id)
+    )
+""")
+
+# Default users
+db.execute("INSERT OR IGNORE INTO users (first_name, last_name, username, hashed_password) VALUES (?, ?, ?, ?)", ("Official", "Test", "OfficialTest", generate_password_hash("OfficialTest12345_")))
+db.execute("INSERT OR IGNORE INTO users (first_name, last_name, username, hashed_password) VALUES (?, ?, ?, ?)", ("Stock", "Market", "Market", generate_password_hash("StockMarketOfficialAccount12345_")))
 
 connection.commit()
 connection.close()
@@ -185,14 +205,14 @@ def home(connected):
         net_value += stock[2] * stock[1]  # Buy Price * Amount
 
     # Rendering requests
-    requests = db.execute("SELECT type, sender_id, date_time FROM requests WHERE receiver_id = ?", [session["user_id"]]).fetchall()
+    requests = db.execute("SELECT id, type, sender_id, date_time FROM requests WHERE receiver_id = ?", [session["user_id"]]).fetchall()
     
     # Replace IDs by usernames
     requests = [list(request) for request in requests]
 
     for request in requests:
-        user_name = db.execute("SELECT username FROM users WHERE id = ?", [request[1]]).fetchone()
-        request[1] = user_name
+        user_name = db.execute("SELECT username FROM users WHERE id = ?", [request[2]]).fetchone()
+        request[2] = user_name
 
     return render_template("home.html", user_balance=user_balance, holdings=holdings, net_value=net_value, requests=requests)
 
@@ -220,6 +240,9 @@ def edit_balance(connected):
         db.execute("UPDATE accounts SET balance = ? WHERE user_id = ?", (edited_balance, session["user_id"]))
     else:
         db.execute("UPDATE accounts SET balance = ? WHERE user_id = ?", (edited_balance, session["user_id"]))
+    
+    # So users can know how much they started with
+    db.execute("INSERT INTO history (type, sender_id, receiver_id, symbol, amount, unit_value, total_value) VALUES (?, ?, ?, ?, ?, ?, ?)", ("Balance Edit", "Paper Bank", session["user_id"], "N/A", 1, edited_balance, edited_balance))
 
     connected.commit()
 
@@ -279,7 +302,7 @@ def buy(connected):
     else:
         db.execute("UPDATE stocks SET amount = ? WHERE user_id = ? AND symbol = ?", (int(already_owned[0]) + amount, session["user_id"], stock["symbol"]))
     
-    db.execute("INSERT INTO history (type, sender_id, receiver_id, symbol, amount, unit_value, total_value) VALUES (?, ?, ?, ?, ?, ?, ?)", ("Buy", session["user_id"], session["user_id"], stock["symbol"], amount, stock["price"], total_price))
+    db.execute("INSERT INTO history (type, sender_id, receiver_id, symbol, amount, unit_value, total_value) VALUES (?, ?, ?, ?, ?, ?, ?)", ("Buy", "Market", session["user_id"], stock["symbol"], amount, stock["price"], total_price))
     connected.commit()
 
     return redirect("/home")
@@ -334,7 +357,7 @@ def sell(connected):
     
     # Give money to user and log to history
     db.execute("UPDATE accounts SET balance = balance + ? WHERE user_id = ?", (amount * stock["price"], session["user_id"]))
-    db.execute("INSERT INTO history (type, sender_id, receiver_id, symbol, amount, unit_value, total_value) VALUES (?, ?, ?, ?, ?, ?, ?)", ("Sell", session["user_id"], session["user_id"], stock["symbol"], amount, stock["price"], stock["price"] * amount))
+    db.execute("INSERT INTO history (type, sender_id, receiver_id, symbol, amount, unit_value, total_value) VALUES (?, ?, ?, ?, ?, ?, ?)", ("Sell", session["user_id"], "Market", stock["symbol"], amount, stock["price"], stock["price"] * amount))
     connected.commit()
 
     return redirect("/home")
@@ -358,6 +381,25 @@ def history(connected):
 
     return render_template("history.html", history=history)
 
+@app.route("/friends")
+@login_required
+@using_database
+def friends(connected):
+    db = connected.cursor()
+
+    # Get user's friends
+    friends = db.execute("SELECT user2_id FROM friendships WHERE user1_id = ?", [session["user_id"]]).fetchall()
+    friends += db.execute("SELECT user1_id FROM friendships WHERE user2_id = ?", [session["user_id"]]).fetchall()
+
+    # Replace IDs by usernames and filter out the current user's ID
+    friends = [list(friend) for friend in friends if friend[0] != session["user_id"]]
+
+    for friend in friends:
+        user_name = db.execute("SELECT username FROM users WHERE id = ?", [friend[0]]).fetchone()
+        friend[0] = user_name[0]  # Extract the username from the tuple
+
+    return render_template("friends.html", friends=friends)
+
 @app.route("/friends/add", methods=["GET", "POST"])
 @login_required
 @using_database
@@ -370,7 +412,16 @@ def add_friend(connected):
     if not receiver_id:
         return apology("User does not exist", 403)
     
-    db.execute("INSERT INTO requests (type, sender_id, receiver_id) VALUES (?, ?, ?)", ("Friend Request", session["user_id"], receiver_id[0]))
+    # Check user didn't already receive request from friend
+    request_exists = db.execute("SELECT id FROM requests WHERE type = ? AND sender_id = ? AND receiver_id = ?", ("Friend", receiver_id[0], session["user_id"])).fetchone()
+    if request_exists:
+        db.execute("INSERT INTO friendships (user1_id, user2_id) VALUES (?, ?)", (receiver_id[0], session["user_id"]))
+    else:
+        db.execute("INSERT INTO requests (type, sender_id, receiver_id) VALUES (?, ?, ?)", ("Friend", session["user_id"], receiver_id[0]))
+    
+    # Log the friend request action
+    db.execute("INSERT INTO history (type, sender_id, receiver_id, symbol, amount, unit_value, total_value) VALUES (?, ?, ?, ?, ?, ?, ?)", ("FriendRequest", session["user_id"], receiver_id[0], "N/A", 1, 1, 1))
+
     connected.commit()
 
     return redirect("/home")

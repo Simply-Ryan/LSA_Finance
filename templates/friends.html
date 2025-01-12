@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Friends
+{% endblock %}
+
+{% block main %}
+    <div class="container mt-4">
+        <div class="row">
+            {% for friend in friends %}
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <img src="{{ url_for('static', filename='profile_pics/' ~ friend.profile_pic) }}" class="card-img-top" alt="Profile Picture">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ friend }}</h5>
+                            <p class="card-text">Some additional info about the user.</p>
+                            <a href="" class="btn btn-danger btn-sm"><i class="fas fa-user-minus"></i> Remove</a>
+                            <a href="" class="btn btn-primary btn-sm"><i class="fas fa-envelope"></i> Message</a>
+                            <a href="" class="btn btn-success btn-sm"><i class="fas fa-user-plus"></i> Invite</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
