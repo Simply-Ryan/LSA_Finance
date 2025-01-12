@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    User Profile
+{% endblock %}
+
+{% block main %}
+<div class="container mt-4">
+    <div class="text-center">
+        <img src="../static/default_pfp.jpg" class="rounded-circle" alt="Profile Picture" width="150" height="150">
+    </div>
+    <h2 class="text-center mt-3">{{ username }}'s Profile</h2>
+    <p><strong>Account Balance:</strong> {{ account_balance | usd }}</p>
+    <p><strong>Last Action:</strong> {{ last_activity }}</p>
+    <h3>Owned Stocks</h3>
+    {% for stock in stocks %}
+        <li>{{ stock[0] }}: {{ stock[1] }} share(s)</li>
+    {% endfor %}
+</div>
+{% endblock %}

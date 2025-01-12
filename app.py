@@ -112,6 +112,8 @@ db.execute("""
 # Default users
 db.execute("INSERT OR IGNORE INTO users (first_name, last_name, username, hashed_password) VALUES (?, ?, ?, ?)", ("Official", "Test", "OfficialTest", generate_password_hash("OfficialTest12345_")))
 db.execute("INSERT OR IGNORE INTO users (first_name, last_name, username, hashed_password) VALUES (?, ?, ?, ?)", ("Stock", "Market", "Market", generate_password_hash("StockMarketOfficialAccount12345_")))
+officialtest_id = 41
+market_id = 42 # Used as receiver of sold stocks and sender of bought stocks
 
 connection.commit()
 connection.close()
@@ -242,7 +244,7 @@ def edit_balance(connected):
         db.execute("UPDATE accounts SET balance = ? WHERE user_id = ?", (edited_balance, session["user_id"]))
     
     # So users can know how much they started with
-    db.execute("INSERT INTO history (type, sender_id, receiver_id, symbol, amount, unit_value, total_value) VALUES (?, ?, ?, ?, ?, ?, ?)", ("Balance Edit", "Paper Bank", session["user_id"], "N/A", 1, edited_balance, edited_balance))
+    db.execute("INSERT INTO history (type, sender_id, receiver_id, symbol, amount, unit_value, total_value) VALUES (?, ?, ?, ?, ?, ?, ?)", ("Balance Edit", market_id, session["user_id"], "N/A", 1, edited_balance, edited_balance))
 
     connected.commit()
 
@@ -302,7 +304,7 @@ def buy(connected):
     else:
         db.execute("UPDATE stocks SET amount = ? WHERE user_id = ? AND symbol = ?", (int(already_owned[0]) + amount, session["user_id"], stock["symbol"]))
     
-    db.execute("INSERT INTO history (type, sender_id, receiver_id, symbol, amount, unit_value, total_value) VALUES (?, ?, ?, ?, ?, ?, ?)", ("Buy", "Market", session["user_id"], stock["symbol"], amount, stock["price"], total_price))
+    db.execute("INSERT INTO history (type, sender_id, receiver_id, symbol, amount, unit_value, total_value) VALUES (?, ?, ?, ?, ?, ?, ?)", ("Buy", market_id, session["user_id"], stock["symbol"], amount, stock["price"], total_price))
     connected.commit()
 
     return redirect("/home")
@@ -345,7 +347,8 @@ def sell(connected):
         return apology("Not enough shares owned", 403)
     elif owned_amount == amount: # Owns just enough
         db.execute("DELETE FROM stocks WHERE user_id = ? AND symbol = ?", (session["user_id"], stock["symbol"]))
-    else: # Owns more than enough - First in stocks tuple sold first
+    else: 
+        # Owns more than enough - First in stocks tuple sold first
         # Loop through the stocks and delete the appropriate amount starting from the oldest ones
         for owned_stock in stocks:
             if amount >= owned_stock[0]:  # If the amount to sell is greater than or equal to the amount of this stock
@@ -357,7 +360,7 @@ def sell(connected):
     
     # Give money to user and log to history
     db.execute("UPDATE accounts SET balance = balance + ? WHERE user_id = ?", (amount * stock["price"], session["user_id"]))
-    db.execute("INSERT INTO history (type, sender_id, receiver_id, symbol, amount, unit_value, total_value) VALUES (?, ?, ?, ?, ?, ?, ?)", ("Sell", session["user_id"], "Market", stock["symbol"], amount, stock["price"], stock["price"] * amount))
+    db.execute("INSERT INTO history (type, sender_id, receiver_id, symbol, amount, unit_value, total_value) VALUES (?, ?, ?, ?, ?, ?, ?)", ("Sell", session["user_id"], market_id, stock["symbol"], amount, stock["price"], stock["price"] * amount))
     connected.commit()
 
     return redirect("/home")
@@ -380,6 +383,36 @@ def history(connected):
         history[i] = event  # Assign the modified list back to the history list
 
     return render_template("history.html", history=history)
+
+
+@app.route("/profile", methods=["GET"])
+@login_required
+@using_database
+def profile(connected):
+    username = request.args.get("username")
+    if not username:
+        return apology("Username not provided", 400)
+
+    # Get user info
+    db = connected.cursor()
+    user = db.execute("SELECT id, username FROM users WHERE username = ?", [username]).fetchone()
+    if not user:
+        return apology("User not found", 404)
+    user_id = user[0]
+
+    # Get user account balance
+    account = db.execute("SELECT balance FROM accounts WHERE user_id = ?", [user_id]).fetchone()
+    account_balance = account[0]
+
+    # Get owned stocks
+    stocks = db.execute("SELECT symbol, amount FROM stocks WHERE user_id = ?", [user_id]).fetchall()
+
+    # Get last activity
+    last_activity = db.execute("SELECT date_time FROM history WHERE sender_id = ? OR receiver_id = ? ORDER BY date_time DESC LIMIT 1", (user_id, user_id)).fetchone()
+    last_activity = last_activity[0] if last_activity else "No activity"
+
+    return render_template("profile.html", username=user[1], account_balance=account_balance, stocks=stocks, last_activity=last_activity)
+
 
 @app.route("/friends")
 @login_required
