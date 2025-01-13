@@ -55,27 +55,5 @@
             // Save the preference in localStorage
             localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
         });
-
-        // CONFIRMATION MODAL SECTION
-        const buyConfirmationCheckbox = document.getElementById('buyConfirmation');
-
-        // Load the saved setting from localStorage when the page loads
-        window.addEventListener('load', () => {
-            const buyConfirmationEnabled = localStorage.getItem('confirmModal');
-            
-            // Set the checkbox state based on the stored value
-            if (buyConfirmationEnabled === 'true') {
-                buyConfirmationCheckbox.checked = true;
-            } else {
-                buyConfirmationCheckbox.checked = false;
-            }
-        });
-
-        // Listen for changes to the checkbox
-        buyConfirmationCheckbox.addEventListener('change', (event) => {
-            // Save the current state to localStorage
-            const isChecked = event.target.checked;
-            localStorage.setItem('confirmModal', isChecked.toString());
-        });
     </script>
 {% endblock %}

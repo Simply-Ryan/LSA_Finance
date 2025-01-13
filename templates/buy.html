@@ -20,104 +20,38 @@
             <input type="number" class="form-control" id="amount" name="amount" placeholder="Amount" min="1" required>
         </div>
         <button class="btn btn-primary" id="buyStockBtn">Buy</button>
-
-        <!-- Modal -->
-        <div id="confirmationModal" class="modal">
-            <div class="modal-content">
-                <h2>Confirm Purchase</h2>
-                <p id="modalMessage">
-                    Are you sure you want to buy this stock?
-                </p>
-                <p id="modalDetails">
-                    <!-- This will be filled dynamically -->
-                </p>
-                <button id="confirmBtn">Confirm</button>
-                <button id="cancelBtn">Cancel</button>
-            </div>
-        </div>
     </form>
 
     <script>
-        // Get modal elements
-        const modal = document.getElementById("confirmationModal");
-        const buyStockBtn = document.getElementById("buyStockBtn");
-        const cancelBtn = document.getElementById("cancelBtn");
-        const confirmBtn = document.getElementById("confirmBtn");
-        const form = document.getElementById("buyForm");
-        const modalDetails = document.getElementById("modalDetails");
+    let debounceTimeout;
 
-        // Initially hide the modal when the page loads
-        modal.style.display = "none"; 
+    document.getElementById("symbol").addEventListener("input", function() {
+        clearTimeout(debounceTimeout);
+        var symbol = this.value;
+        symbol = symbol.toUpperCase();
+        this.value = symbol;
+        if (symbol) {
+            debounceTimeout = setTimeout(() => fetchStockPrice(symbol), 500);
+        }
+    });
 
-        // Finnhub API Key
-        const API_KEY = "cu05qhpr01ql96gpu91gcu05qhpr01ql96gpu920";
+    function fetchStockPrice(symbol) {
+        var apiKey = "cu05qhpr01ql96gpu91gcu05qhpr01ql96gpu920";
+        var url = `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${apiKey}`;
 
-        // When the user clicks on "Buy", check the modal preference
-        buyStockBtn.onclick = async function(event) {
-            event.preventDefault(); // Prevent default form submission
-
-            const symbol = document.getElementById("symbol").value.trim();
-            const amount = parseInt(document.getElementById("amount").value);
-
-            if (!symbol || !amount || amount < 1) {
-                alert("Please enter a valid stock symbol and amount.");
-                return;
-            }
-
-            // Only show the modal if the user preference for showing it is true
-            if (localStorage.getItem("confirmModal") === "true") {
-                // Fetch stock data from Finnhub
-                try {
-                    const response = await fetch(
-                        `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${API_KEY}`
-                    );
-                    const data = await response.json();
-
-                    if (data && data.c) {
-                        const stockPrice = data.c; // Current stock price
-                        const totalCost = (stockPrice * amount).toFixed(2);
-                        const remainingBalance = ({{ userBalance }} - totalCost); // Replace with user's actual balance
-
-                        modalDetails.innerHTML = `
-                            After buying ${amount} share(s) of ${symbol}, 
-                            you will have ${remainingBalance} USD left 
-                            (total cost: ${totalCost} USD).
-                        `;
-                    } else {
-                        modalDetails.innerHTML = "Unable to fetch stock price. Please try again.";
-                    }
-                } catch (error) {
-                    console.error("Error fetching stock data:", error);
-                    modalDetails.innerHTML = "Error fetching stock data. Please try again.";
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.c) {  // Finnhub current price
+                    var stockPrice = data.c;
+                    var userBalance = {{ userBalance }};
+                    var maxShares = Math.floor(userBalance / stockPrice);
+                    document.getElementById("amount").value = maxShares;
                 }
-
-                modal.style.display = "block"; // Show the modal
-            } else {
-                form.submit(); // Submit the form directly without showing the modal
-            }
-        };
-
-        // When the user clicks on "Cancel", close the modal and don't submit the form
-        cancelBtn.onclick = function(event) {
-            event.preventDefault(); // Prevent form submission
-            modal.style.display = "none"; // Hide the modal
-            localStorage.setItem("confirmModal", "false"); // Reset preference
-        };
-
-        // When the user clicks on "Confirm", submit the form
-        confirmBtn.onclick = function() {
-            modal.style.display = "none"; // Close the modal
-            form.submit(); // Submit the form
-            localStorage.setItem("confirmModal", "false"); // Reset preference
-        };
-
-        // Close the modal if the user clicks anywhere outside of it
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none"; // Hide modal
-                localStorage.setItem("confirmModal", "false"); // Reset preference if clicked outside
-            }
-        };
+            })
+            .catch(error => {
+                console.error("Error fetching stock price:", error);
+            });
+    }
     </script>
-
 {% endblock %}

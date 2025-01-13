@@ -202,10 +202,6 @@ def home(connected):
 
     holdings = [list(stock) for stock in holdings]
 
-    for stock in holdings:
-        stock.append(stock[3] - (stock[1] * lookup(stock[0])["price"]))  # Total Buy Price - Total Current Price (Total Profit/Loss)
-        net_value += stock[2] * stock[1]  # Buy Price * Amount
-
     # Rendering requests
     requests = db.execute("SELECT id, type, sender_id, date_time FROM requests WHERE receiver_id = ?", [session["user_id"]]).fetchall()
     
@@ -215,6 +211,11 @@ def home(connected):
     for request in requests:
         user_name = db.execute("SELECT username FROM users WHERE id = ?", [request[2]]).fetchone()
         request[2] = user_name
+
+    # Calculating profits and net value
+    for stock in holdings:
+        stock.append(stock[3] - (stock[1] * lookup(stock[0])["price"]))  # Total Buy Price - Total Current Price (Total Profit/Loss)
+        net_value += stock[2] * stock[1]  # Buy Price * Amount
 
     return render_template("home.html", user_balance=user_balance, holdings=holdings, net_value=net_value, requests=requests)
 
@@ -316,8 +317,8 @@ def sell(connected):
     db = connected.cursor()
 
     if request.method == "GET":
-        # Fetch all symbols from the database
-        holdings = db.execute("SELECT symbol FROM stocks WHERE user_id = ?", [session["user_id"]]).fetchall()
+        # Fetch all symbols and amounts from the database
+        holdings = db.execute("SELECT symbol, amount FROM stocks WHERE user_id = ?", [session["user_id"]]).fetchall()
         unique_symbols = list(set(holdings))
 
         return render_template("sell.html", holdings=unique_symbols)
