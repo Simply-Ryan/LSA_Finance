@@ -48,6 +48,7 @@ db.execute("""
     )
 """)
 
+# HISTORY TABLE: id, type, sender_id, receiver_id, symbol, amount, unit_value, total_value, date_time
 db.execute("""
     CREATE TABLE IF NOT EXISTS history (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -196,6 +197,7 @@ def home(connected):
     db = connected.cursor()
 
     # Rendering currently owned stocks and portfolio
+    original_balance = db.execute("SELECT total_value FROM history WHERE receiver_id = ? AND type = ?", (session["user_id"], "Balance Edit")).fetchone()[0]
     user_balance = db.execute("SELECT balance FROM accounts WHERE user_id = ?", [session["user_id"]]).fetchone()[0]
     holdings = db.execute("SELECT symbol, amount, unit_value, total_value, buy_time FROM stocks WHERE user_id = ?", [session["user_id"]]).fetchall()
     net_value = user_balance
@@ -217,7 +219,10 @@ def home(connected):
         stock.append(stock[3] - (stock[1] * lookup(stock[0])["price"]))  # Total Buy Price - Total Current Price (Total Profit/Loss)
         net_value += stock[2] * stock[1]  # Buy Price * Amount
 
-    return render_template("home.html", user_balance=user_balance, holdings=holdings, net_value=net_value, requests=requests)
+    net_profit = net_value - original_balance  # Net Profit/Loss
+    net_profit_percent = round((net_value - original_balance) / original_balance * 100, 2)  # Net Profit/Loss in percentage
+
+    return render_template("home.html", user_balance=user_balance, holdings=holdings, net_value=net_value, requests=requests, net_profit=net_profit, net_profit_percent=net_profit_percent)
 
 
 # Edit user balance (Paper Trade)
@@ -329,6 +334,7 @@ def sell(connected):
     
     # Check fields
     try:
+        print(request.form.get("amount")) # TODO FIX NONETYPE ERROR
         amount = int(request.form.get("amount"))
     except ValueError:
         return apology("Invalid number of shares", 403)
@@ -410,7 +416,7 @@ def profile(connected):
 
     # Get last activity
     last_activity = db.execute("SELECT date_time FROM history WHERE sender_id = ? OR receiver_id = ? ORDER BY date_time DESC LIMIT 1", (user_id, user_id)).fetchone()
-    last_activity = last_activity[0] if last_activity else "No activity"
+    last_activity = last_activity[0][:10] if last_activity else "No activity" # Extract date from datetime (using [:10])
 
     return render_template("profile.html", username=user[1], account_balance=account_balance, stocks=stocks, last_activity=last_activity)
 

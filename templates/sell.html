@@ -12,13 +12,14 @@
                 <label for="symbol" class="form-label">Stock Symbol</label>
                 <select class="form-select" id="symbol" name="symbol" onchange="updateShares()">
                     {% for holding in holdings %}
-                        <option value="{{ holding[0] }}" data-amount="{{ holding[1] }}">{{ holding[0] }}</option>
+                    <option value="" selected disabled>Select a stock</option>    
+                    <option value="{{ holding[0] }}" data-amount="{{ holding[1] }}">{{ holding[0] }}</option>
                     {% endfor %}
                 </select>
             </div>
             <div class="mb-3">
-                <label for="shares" class="form-label">Number of Shares</label>
-                <input type="number" class="form-control" id="shares" name="shares" min="1" required>
+                <label for="amount" class="form-label">Number of Shares</label>
+                <input type="number" class="form-control" id="amount" name="amount" min="1" required>
             </div>
             <button type="submit" class="btn btn-primary">Sell</button>
         </form>
@@ -29,7 +30,7 @@
         var symbolSelect = document.getElementById("symbol");
         var selectedOption = symbolSelect.options[symbolSelect.selectedIndex];
         var amount = selectedOption.getAttribute("data-amount");
-        document.getElementById("shares").value = amount;
+        document.getElementById("amount").value = amount;
     }
     </script>
 {% endblock %}

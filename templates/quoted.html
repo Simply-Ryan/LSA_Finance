@@ -6,14 +6,25 @@
 
 {% block main %}
 
-    <h1>Stock Price</h1>
+    {% if quote["found"] == 1 %} <!-- Stock is found -->
+        <h1>{{ quote["company_name"] }} ({{ quote["symbol"] }})</h1>
 
-    <p>
-        The price of a single share of {{ quote["symbol"] }} is {{ quote["price"] | usd }}
-        <!-- Volume: {{quote["volume"]}} -->
-    </p>
-    <br>
-    <div class="graph"><a href="https://finance.yahoo.com/quote/{{ quote['symbol'] }}">Check graph</a></div>
+        <strong>Current Price:</strong> {{ quote["price"] | usd }}
+        <br>
+        <strong>Change:</strong> {{ quote["change"]}}
+        <br>
+        <strong>Percent Change:</strong> {{ quote["percent_change"] }}%
+        <br>
+        <strong>Day High/Low:</strong> {{ quote["day_high"] | usd }}/{{ quote["day_low"] | usd }}
+        <br><br>
+        <h5 class="graph"><a href="https://finance.yahoo.com/quote/{{ quote['symbol'] }}">Check graph</a></h5>
+        {% else %} <!-- Lookup the stock instead -->
+        <h1>Stock Lookup</h1>
+        <br>
+        {% for result in quote["results"] %}
+            <a href="/quoted?symbol={{ result['symbol'] }}"><h5>{{ result["description"] }} - {{ result["symbol"] }}</h5></a>
+        {% endfor %}
+    {% endif %}
     <br>
     <a href="/quote" class="btn btn-primary">Quote Another Stock</a>
 

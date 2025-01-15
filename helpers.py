@@ -93,15 +93,26 @@ def lookup(symbol):
     
     # Request data from Finnhub
     data = finnhub_client.quote(symbol)
-    #data = json.loads(request)
+    lookup = finnhub_client.symbol_lookup(symbol)
 
+    # If symbol is invalid, look stock up instead.
+    if data["c"] == 0:
+        result = lookup["result"]
+        quote = {"found": 0, "results": result}
+
+        return quote
+
+    company_name = lookup['result'][0]['description']
     price = data['c']
-    # volume = data['data'][0]['v']
-    quote = {"price": price, "symbol": symbol}
+    change = data['d']
+    percent_change = data['dp']
+    day_high = data['h']
+    day_low = data['l']
+    quote = {"found": 1, "company_name": company_name,"price": price, "symbol": symbol, "change": change, "percent_change": percent_change, "day_high": day_high, "day_low": day_low}
 
     return quote
 
 
 def usd(value):
     """Format value as USD."""
-    return f"${value:,.2f}"
+    return f"{value:,.2f}$"

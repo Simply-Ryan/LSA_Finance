@@ -6,7 +6,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="initial-scale=1, width=device-width">
 
-        <!-- Unkown dependecy -->
+        <!-- Unkown dependecies -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
         <!-- http://getbootstrap.com/docs/5.3/ -->
@@ -32,16 +32,16 @@
                 <div class="collapse navbar-collapse" id="navbar">
                     {% if session["user_id"] %}
                         <ul class="navbar-nav me-auto mt-2">
-                            <li class="nav-item"><a class="nav-link" href="/quote">Quote</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/buy">Buy</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/sell">Sell</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/history">History</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/edit">Edit</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/friends">Friends</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/settings">Settings</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/quote"><i class="fas fa-chart-line"></i> Quote</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/buy"><i class="fas fa-shopping-cart"></i> Buy</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/sell"><i class="fas fa-dollar-sign"></i> Sell</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/history"><i class="fas fa-history"></i> History</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/edit"><i class="fas fa-edit"></i> Edit</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/friends"><i class="fas fa-users"></i> Friends</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/settings"><i class="fas fa-cog"></i> Settings</a></li>
                         </ul>
                         <ul class="navbar-nav ms-auto mt-2">
-                            <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Log Out</a></li>
                         </ul>
                     {% else %}
                         <ul class="navbar-nav ms-auto mt-2">
