@@ -28,62 +28,51 @@ body.dark-mode {
     color: white;
 }
 
-/* The Modal (background) */
-.modal {
-    display: none;  /* Hidden by default */
-    position: fixed;  /* Fixed position */
-    z-index: 1;  /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%;  /* Full width */
-    height: 100%;  /* Full height */
-    background-color: rgba(0, 0, 0, 0.4);  /* Semi-transparent background */
-    display: flex;  /* Use flexbox for centering */
-    justify-content: center;  /* Horizontally center */
-    align-items: center;  /* Vertically center */
-}
-
-/* Modal Content */
-.modal-content {
-    background-color: #fff;  /* White background for visibility */
-    color: #000;  /* Black text for contrast */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;  /* Modal width */
-    max-width: 500px;  /* Limit max width */
-    text-align: center;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* Optional shadow for better visual */
-}
-
-/* Cancel modal button */
-#cancelBtn {
-    background-color: red;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-/* Confirm button (optional styling for consistency) */
-#confirmBtn {
-    background-color: green;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-/* Button hover effect */
-#cancelBtn:hover,
-#confirmBtn:hover {
-    opacity: 0.8;
-}
-
 /* TABLE SECTION */
 /* Table row hover */
 table tr:hover {
     background-color: #537fbe;
 }
+
+/* BODY SECTION ------------------------------- */
+
+body {
+    font-family: 'Nunito', sans-serif; /* Font in html head */
+    font-weight: 500;
+}
+
+/* body {
+    background-image: url('../static/stocks_background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    margin: 0;
+} */
+
+/* MODAL SECTION */
+
+/* Set custom width and height for the modal /
+/* .modal-dialog {
+    width: 80%;  /* Adjust width (e.g., 80% of the page width) /
+    max-width: 900px;  /* Set a maximum width /
+    height: auto;  /* Set height to auto or specify a fixed height /
+}
+
+/* Adjust modal content's height if necessary /
+.modal-content {
+    height: auto;   Adjust content height to fit the modal 
+    overflow-y: auto;  /* Enable scroll if content exceeds height 
+}
+
+/* Ensure there's no overlap with the navbar /
+.modal {
+    margin-top: 100px;  /* Adjust to create space between navbar and modal /
+}
+
+/* Optional: Adjust modal when it's very large  /
+/* @media (max-width: 768px) {
+    .modal-dialog {
+        width: 90%;   Use a wider modal on smaller screens 
+    }
+} */

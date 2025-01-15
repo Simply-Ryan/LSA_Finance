@@ -105,7 +105,7 @@ def lookup(symbol):
     company_name = lookup['result'][0]['description']
     price = data['c']
     change = data['d']
-    percent_change = data['dp']
+    percent_change = round(data['dp'], 2)
     day_high = data['h']
     day_low = data['l']
     quote = {"found": 1, "company_name": company_name,"price": price, "symbol": symbol, "change": change, "percent_change": percent_change, "day_high": day_high, "day_low": day_low}

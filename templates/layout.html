@@ -11,7 +11,10 @@
 
         <!-- http://getbootstrap.com/docs/5.3/ -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-        <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"></script>
+        <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pzjw8f+ua7Kw1TIq0sRDNf5CO3wZg97FFtfnQdp8YljlyGSx92z5DLnDwiqqN72f"></script>
+        
+        <!-- Font -->
+        <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
 
         <!-- LSA Logo -->
         <link href="../static/lsa_logo.png" rel="icon">
@@ -64,6 +67,28 @@
         <main class="container-fluid py-5 text-center">
             {% block main %}{% endblock %}
         </main>
+        
+        <!-- Modal Structure -->
+        <!--
+        <div class="modal show" tabindex="-1" role="dialog" id="myModal" style="display: block;">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{% block modal_header %}{% endblock %}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {% block modal_body %}Content here{% endblock %}
+                    </div>
+                    <div class="modal-footer">
+                        {% block modal_footer %}
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div> -->
 
         <footer class="mb-5 small text-center text-muted">
             Stocks data provided by <a href="https://https://finnhub.io">Finnhub</a> (Not affiliated in any way.)

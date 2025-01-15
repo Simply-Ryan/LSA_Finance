@@ -6,15 +6,15 @@
 
 {% block main %}
 
-    <h1>Home</h1>
+    <h1><i class="fas fa-home"></i> Home</h1>
 
     <br>
 
-    <p>Cash Balance: {{ user_balance | usd }}</p>
+    <p><i class="fa-solid fa-money-bill"></i> Cash Balance: {{ user_balance | usd }}</p>
 
     <br>
 
-    <h3>Paper Portfolio</h3>
+    <h3><i class="fas fa-briefcase"></i> Paper Portfolio</h3>
 
     <table class="table">
         <thead>
@@ -36,11 +36,26 @@
 
     <br>
 
-    <p>Net Portfolio Value: {{ net_value | usd }} ({{ net_profit | usd }} /{{ net_profit_percent }}%)</p>
+    <p>
+        <i class="fa-solid fa-wallet"></i> Net Portfolio Value: {{ net_value | usd }} 
+        {% if net_profit < 0 %}
+            <i class="fa-solid fa-circle-arrow-up" 
+               style="color: #ff526d; transform: rotate(180deg);"></i>
+            <strong style="color: #ff526d;">{{ net_profit | usd }} ({{ net_profit_percent }}%)</strong>
+        {% elif net_profit > 0 %}
+            <i class="fa-solid fa-circle-arrow-up" 
+               style="color: #00c288;"></i>
+            <strong style="color: #00c288;">{{ net_profit | usd }} ({{ net_profit_percent }}%)</strong>
+        {% else %}
+            <i class="fa-solid fa-circle-minus" 
+               style="color: #fa9933;"></i>
+            <strong style="color: #fa9933;">{{ net_profit | usd }} ({{ net_profit_percent }}%)</strong>
+        {% endif %}
+    </p>    
 
     <br>
 
-    <h3>Requests</h3>
+    <h3><i class="fa-solid fa-bell-concierge"></i> Requests</h3>
 
     <table class="table">
         <thead>
