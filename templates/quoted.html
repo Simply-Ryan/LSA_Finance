@@ -16,7 +16,41 @@
         <strong>Percent Change:</strong> {{ quote["percent_change"] }}%
         <br>
         <strong>Day High/Low:</strong> {{ quote["day_high"] | usd }}/{{ quote["day_low"] | usd }}
-        <br><br>
+        
+        <br><br><br>
+
+
+        <div class="tradingview-widget-container-wrapper">
+            <div class="tradingview-widget-container">
+                <div class="tradingview-widget-container__widget"></div>
+                <div class="tradingview-widget-copyright">
+                    <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
+                        <span class="blue-text">Track all markets on TradingView</span>
+                    </a>
+                </div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+                    {
+                    "width": "980",
+                    "height": "610",
+                    "symbol": "{{ quote['symbol'] }}",
+                    "interval": "5",
+                    "timezone": "Etc/UTC",
+                    "theme": "dark",
+                    "style": "1",
+                    "locale": "en",
+                    "hide_legend": true,
+                    "hide_side_toolbar": false,
+                    "allow_symbol_change": false,
+                    "calendar": false,
+                    "support_host": "https://www.tradingview.com",
+                }
+                </script>
+            </div>
+        </div>        
+        
+
+        <br><br><br>
+
         <h5 class="graph"><a href="https://finance.yahoo.com/quote/{{ quote['symbol'] }}">Check graph</a></h5>
         {% else %} <!-- Lookup the stock instead -->
         <h1>Stock Lookup</h1>

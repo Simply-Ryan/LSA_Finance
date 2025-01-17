@@ -35,10 +35,81 @@ table tr:hover {
 }
 
 /* BODY SECTION ------------------------------- */
-
 body {
-    font-family: 'Nunito', sans-serif; /* Font in html head */
-    font-weight: 500;
+    background-color: #131722; /* Matches the dark background of the widget */
+    color: #d1d4dc; /* Light text color for contrast */
+    font-family: Arial, sans-serif; /* Optional, to ensure readability */
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Center content vertically and horizontally */
+}
+
+.grid {
+    display: grid;
+    gap: 20px; /* Spacing between grid items */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive columns */
+    width: 100%;
+    max-width: 1200px; /* Limit max width for better appearance */
+    margin: 0 auto;
+}
+
+.card {
+    background-color: #1e222d; /* Slightly lighter than the background for contrast */
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8); /* Soft shadow for a modern look */
+}
+
+/* NAV BAR SECTION */
+.navbar { /* Navbar styling */
+    box-shadow: 0 8px 16px 4px rgba(0, 0, 0, 0.5); /* Shadow below the navbar */
+}
+
+.contour-text { /* Text with contour effect */
+    -webkit-text-stroke: 0.5px #d1d4dc; /* Contour color and thickness */
+}
+
+.nav-link {
+    color: #d1d4dc; /* Light text color for contrast */
+}
+
+.nav-link:hover {
+    color: #e6e8ef; /* Light text color for contrast */
+}
+
+/* TABLE SECTION */
+.table {
+    color: #d1d4dc; /* Light text color for contrast */
+}
+
+/* SEARCH BAR / INPUT SECTION */
+input[type="text"] {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    border: 1px solid #d1d4dc;
+    border-radius: 5px;
+    background-color: #f0f4fc;
+    color: #333;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:hover {
+    border-color: #007bff;
+}
+
+input[type="text"]:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 5px rgba(0, 91, 187, 0.5);
+    background-color: #ffffff;
 }
 
 /* body {
@@ -76,3 +147,17 @@ body {
         width: 90%;   Use a wider modal on smaller screens 
     }
 } */
+
+/* WIDGET SECTION */
+.tradingview-widget-container-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* or adjust to the container height */
+    text-align: center;
+}
+
+.tradingview-widget-container {
+    width: 980px; /* Ensure it matches the widget width */
+    height: 610px; /* Ensure it matches the widget height */
+}

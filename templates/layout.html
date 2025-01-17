@@ -24,11 +24,10 @@
         <title>L$A Finance - {% block title %}{% endblock %}</title>
     </head>
 
-    <body class="{{ 'dark-mode' if dark_mode else 'light-mode' }}">
-
-        <nav class="{{ 'bg-dark navbar-dark' if dark_mode else 'bg-light navbar-light' }} border navbar navbar-expand-md">
+    <body>
+        <nav class="navbar navbar-expand-md">
             <div class="container-fluid">
-                <a class="navbar-brand" href="/home"><img src="../static/lsa_logo.png" alt="LSA_Logo" width="35" height="35"> <span class="blue">L</span><span class="red">$</span><span class="blue">A</span> <span class="red">Finance</span></a>
+                <a class="navbar-brand contour-text" href="/home"><img src="../static/lsa_logo.png" alt="LSA_Logo" width="35" height="35"> <span class="blue">L</span><span class="red">$</span><span class="blue">A</span> <span class="red">Finance</span></a>
                 <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbar" data-bs-toggle="collapse" type="button">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -90,20 +89,8 @@
             </div>
         </div> -->
 
-        <footer class="mb-5 small text-center text-muted">
+        <footer class="mb-5 small text-center">
             Stocks data provided by <a href="https://https://finnhub.io">Finnhub</a> (Not affiliated in any way.)
         </footer>
     </body>
-    <script>
-        // Apply saved theme from localStorage
-        window.addEventListener('load', function() {
-            let savedTheme = localStorage.getItem('theme');
-            if (savedTheme) {
-                document.body.classList.add(savedTheme + '-mode');
-            } else {
-               // Default to light theme
-               document.body.classList.add('light-mode');
-            }
-        });
-    </script>
 </html>

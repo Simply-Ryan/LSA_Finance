@@ -82,6 +82,7 @@ def check_form(fields):
             return False
     return True
 
+
 def lookup(symbol):
     """Look up quote for symbol."""
 
