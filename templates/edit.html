@@ -5,19 +5,19 @@
 {% endblock %}
 
 {% block main %}
+    <div class="card">
+        <h1>Edit Balance</h1>
 
-    <h1>Edit Balance</h1>
-
-    <form action="/edit" method="post">
-        <div class="mb-3">
-            <label for="amount" class="form-label">New Balance</label>
-            <input type="number" class="form-control" id="amount" name="amount" required>
-        </div>
-        <div class="mb-3">
-            <label for="reset_portfolio" class="form-label">Reset Portfolio</label>
-            <input type="checkbox" name="reset_portfolio" value="true">
-        </div> 
-        <button type="submit" class="btn btn-primary">Set Balance</button>
-    </form>
-
+        <form action="/edit" method="post">
+            <div class="mb-3">
+                <label for="amount" class="form-label">New Balance</label>
+                <input type="number" class="form-control" id="amount" name="amount" required>
+            </div>
+            <div class="mb-3">
+                <label for="reset_portfolio" class="form-label">Reset Portfolio</label>
+                <input type="checkbox" name="reset_portfolio" value="true">
+            </div> 
+            <button type="submit" class="btn btn-primary">Set Balance</button>
+        </form>
+    </div>
 {% endblock %}

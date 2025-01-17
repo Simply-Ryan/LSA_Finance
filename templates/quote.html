@@ -6,14 +6,15 @@
 
 {% block main %}
 
-    <h1>Stock Search</h1>
+    <div class="card">
+        <h2>Stock Search</h2>
 
-    <form action="/quoted" method="get">
-        <div class="mb-3">
-            <label for="symbol" class="form-label">Stock Symbol</label>
-            <input type="text" class="form-control mx-auto wx-auto" id="symbol" name="symbol" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Search</button>
-    </form>
-
+        <form action="/quoted" method="get">
+            <div class="mb-3">
+                <label for="symbol" class="form-label">Stock Symbol</label>
+                <input type="text" class="form-control mx-auto wx-auto" id="symbol" name="symbol" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
 {% endblock %}

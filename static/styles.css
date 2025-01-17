@@ -90,27 +90,33 @@ body {
 }
 
 /* SEARCH BAR / INPUT SECTION */
-input[type="text"] {
-    width: 100%;
-    max-width: 400px;
-    padding: 10px;
-    border: 1px solid #d1d4dc;
-    border-radius: 5px;
-    background-color: #f0f4fc;
-    color: #333;
-    outline: none;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+input {
+    background-color: #2f3a44 !important; /* Slightly lighter than the background for contrast */
+    color: #d1d4dc !important; /* Light text color for contrast */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
 }
 
-input[type="text"]:hover {
-    border-color: #007bff;
+input::placeholder {
+    color: #d1d4dc !important; /* Light text color for contrast */
 }
 
-input[type="text"]:focus {
-    border-color: #0056b3;
-    box-shadow: 0 0 5px rgba(0, 91, 187, 0.5);
-    background-color: #ffffff;
+/* DROPDOWN / SELECT SECTION */
+select {
+    background-color: #2f3a44 !important; /* Slightly lighter than the background for contrast */
+    color: #d1d4dc !important; /* Light text color for contrast */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
 }
+
+/* CHECKBOX INPUT SECTION */
+input[type="checkbox"] + label {
+   position: relative;
+   padding-left: 35px; /* Space for custom checkbox */
+   font-size: 16px;
+   color: #fff; /* Text color for label */
+   cursor: pointer;
+}
+
+/* Custom checkbox before the label */
 
 /* body {
     background-image: url('../static/stocks_background.jpg');
