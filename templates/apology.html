@@ -5,7 +5,13 @@
 {% endblock %}
 
 {% block main %}
-    <!-- https://memegen.link/ -->
-    <!-- https://knowyourmeme.com/memes/grumpy-cat -->
-    <img alt="{{ top }}" class="border img-fluid" src="https://api.memegen.link/images/custom/{{ top | urlencode }}/{{ bottom | urlencode }}.jpg?background=https://content.imageresizer.com/images/memes/Donald-Trump-mad-meme-4.jpg&width=400" title="{{ top }}">
+    {% set meme_background = background if background is defined else "https://content.imageresizer.com/images/memes/Donald-Trump-mad-meme-4.jpg" %}
+    <img 
+        alt="Apology meme: {{ top }} - {{ bottom }}" 
+        class="border img-fluid" 
+        src="https://api.memegen.link/images/custom/{{ top | urlencode }}/{{ bottom | urlencode }}.jpg?background={{ meme_background | urlencode }}" 
+        title="{{ top }} - {{ bottom }}">
+    <noscript>
+        {{ top }} - {{ bottom }}
+    </noscript>
 {% endblock %}

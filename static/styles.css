@@ -1,44 +1,39 @@
-/* Size for brand */
-nav .navbar-brand
-{
+/* ===================== */
+/* BRAND STYLING         */
+/* ===================== */
+nav .navbar-brand {
     font-size: xx-large;
 }
 
-/* Colors for brand */
-nav .navbar-brand .blue
-{
-    color: #537fbe;
-}
-nav .navbar-brand .red
-{
-    color: #ea433b;
+nav .navbar-brand .blue {
+    color: #0c5f7d;
 }
 
-/* THEME */
+nav .navbar-brand .red {
+    color: #b32a40;
+}
+
+/* ===================== */
+/* THEME                 */
+/* ===================== */
 
 /* Light Mode */
 body.light-mode {
-    background-color: white;
-    color: black;
+    background-color: #ffffff;
+    color: #111111;
 }
 
-/* Dark Mode [BROKEN] */
+/* Dark Mode */
 body.dark-mode {
-    background-color: #232323;
-    color: white;
+    background-color: #131722; /* Dark Background */
+    color: #e0e0e0;            /* Bright text */
 }
 
-/* TABLE SECTION */
-/* Table row hover */
-table tr:hover {
-    background-color: #537fbe;
-}
-
-/* BODY SECTION ------------------------------- */
+/* ===================== */
+/* BODY & LAYOUT         */
+/* ===================== */
 body {
-    background-color: #131722; /* Matches the dark background of the widget */
-    color: #d1d4dc; /* Light text color for contrast */
-    font-family: Arial, sans-serif; /* Optional, to ensure readability */
+    font-family: "Nunito", sans-serif;
     margin: 0;
     padding: 0;
 }
@@ -48,122 +43,189 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh; /* Center content vertically and horizontally */
+    min-height: 100vh;
 }
 
 .grid {
     display: grid;
-    gap: 20px; /* Spacing between grid items */
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive columns */
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     width: 100%;
-    max-width: 1200px; /* Limit max width for better appearance */
+    max-width: 1200px;
     margin: 0 auto;
 }
 
 .card {
-    background-color: #1e222d; /* Slightly lighter than the background for contrast */
+    background-color: #1f2230; /* Dark card for contrast */
+    color: #e0e0e0;
     border-radius: 10px;
     padding: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8); /* Soft shadow for a modern look */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
 }
 
-/* NAV BAR SECTION */
-.navbar { /* Navbar styling */
-    box-shadow: 0 8px 16px 4px rgba(0, 0, 0, 0.5); /* Shadow below the navbar */
+/* ===================== */
+/* NAVBAR                */
+/* ===================== */
+.navbar {
+    box-shadow: 0 8px 16px 4px rgba(0, 0, 0, 0.5);
+    transition: background-color 0.3s, color 0.3s;
 }
 
-.contour-text { /* Text with contour effect */
-    -webkit-text-stroke: 0.5px #d1d4dc; /* Contour color and thickness */
+body.light-mode .navbar {
+    background-color: #f8f9fa;
 }
 
-.nav-link {
-    color: #d1d4dc; /* Light text color for contrast */
+body.dark-mode .navbar {
+    background-color: #1e222d;
 }
 
-.nav-link:hover {
-    color: #e6e8ef; /* Light text color for contrast */
+body.light-mode .nav-link,
+body.light-mode .navbar-brand {
+    color: #212529 !important;
 }
 
-/* TABLE SECTION */
+body.light-mode .nav-link:hover {
+    color: #000 !important;
+}
+
+body.dark-mode .nav-link,
+body.dark-mode .navbar-brand {
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .nav-link:hover {
+    color: #ffffff !important;
+}
+
+.contour-text {
+    -webkit-text-stroke: 0.5px #e0e0e0;
+    text-shadow: 0 0 2px rgba(224, 224, 224, 0.6);
+}
+
+/* ===================== */
+/* TABLES                */
+/* ===================== */
 .table {
-    color: #d1d4dc; /* Light text color for contrast */
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
-/* SEARCH BAR / INPUT SECTION */
-input {
-    background-color: #2f3a44 !important; /* Slightly lighter than the background for contrast */
-    color: #d1d4dc !important; /* Light text color for contrast */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+body.dark-mode .table {
+    color: #d1d4dc;
+    background-color: #1e222d;
 }
 
-input::placeholder {
-    color: #d1d4dc !important; /* Light text color for contrast */
+body.dark-mode table tr:hover {
+    background-color: #2f3a44;
 }
 
-/* DROPDOWN / SELECT SECTION */
-select {
-    background-color: #2f3a44 !important; /* Slightly lighter than the background for contrast */
-    color: #d1d4dc !important; /* Light text color for contrast */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+body.light-mode .table {
+    color: #111111;
+    background-color: #f5f5f5;
 }
 
-/* CHECKBOX INPUT SECTION */
+body.light-mode table tr:hover {
+    background-color: #e0e0e0;
+}
+
+.table th {
+    font-weight: bold;
+    padding: 10px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+body.dark-mode .table th {
+    border-bottom: 2px solid #444;
+}
+
+body.light-mode .table th {
+    border-bottom: 2px solid #ccc;
+}
+
+.table td {
+    padding: 10px;
+    vertical-align: middle;
+}
+
+/* ===================== */
+/* INPUTS & FORMS        */
+/* ===================== */
+input, select, textarea {
+    background-color: #2a2f3c !important;
+    color: #e0e0e0 !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+}
+
+input::placeholder, textarea::placeholder {
+    color: #b0b0b0 !important;
+}
+
 input[type="checkbox"] + label {
-   position: relative;
-   padding-left: 35px; /* Space for custom checkbox */
-   font-size: 16px;
-   color: #fff; /* Text color for label */
-   cursor: pointer;
+    position: relative;
+    padding-left: 35px;
+    font-size: 16px;
+    color: #fff;
+    cursor: pointer;
 }
 
-/* Custom checkbox before the label */
-
-/* body {
-    background-image: url('../static/stocks_background.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    height: 100vh;
-    margin: 0;
-} */
-
-/* MODAL SECTION */
-
-/* Set custom width and height for the modal /
-/* .modal-dialog {
-    width: 80%;  /* Adjust width (e.g., 80% of the page width) /
-    max-width: 900px;  /* Set a maximum width /
-    height: auto;  /* Set height to auto or specify a fixed height /
+/* ===================== */
+/* BUTTONS               */
+/* ===================== */
+.btn {
+    font-weight: 600;
 }
 
-/* Adjust modal content's height if necessary /
+/* ===================== */
+/* ALERTS                */
+/* ===================== */
+.alert {
+    color: #ffffff;
+    background-color: #2a2f3c;
+    border-color: #2a2f3c;
+}
+
+/* ===================== */
+/* MODALS                */
+/* ===================== */
+.modal-dialog {
+    width: 80%;
+    max-width: 900px;
+    height: auto;
+}
+
 .modal-content {
-    height: auto;   Adjust content height to fit the modal 
-    overflow-y: auto;  /* Enable scroll if content exceeds height 
+    height: auto;
+    overflow-y: auto;
 }
 
-/* Ensure there's no overlap with the navbar /
 .modal {
-    margin-top: 100px;  /* Adjust to create space between navbar and modal /
+    margin-top: 100px;
 }
 
-/* Optional: Adjust modal when it's very large  /
-/* @media (max-width: 768px) {
+@media (max-width: 768px) {
     .modal-dialog {
-        width: 90%;   Use a wider modal on smaller screens 
+        width: 90%;
     }
-} */
+}
 
-/* WIDGET SECTION */
+/* ===================== */
+/* WIDGET SECTION        */
+/* ===================== */
 .tradingview-widget-container-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* or adjust to the container height */
+    height: 100vh;
     text-align: center;
 }
 
 .tradingview-widget-container {
-    width: 980px; /* Ensure it matches the widget width */
-    height: 610px; /* Ensure it matches the widget height */
+    width: 980px;
+    height: 610px;
 }

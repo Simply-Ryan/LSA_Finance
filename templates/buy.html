@@ -6,54 +6,22 @@
 
 {% block main %}
 
-    <div class="card">
-        <h1>Buy Stocks</h1>
+<div class="card">
+    <h1>Buy Stocks</h1>
 
-        <h3>Current balance: {{ userBalance | usd }}</h3>
+    <h3>Current balance: {{ userBalance | usd }}</h3>
 
-        <form action="/buy" method="post" id="buyForm">
-            <div class="mb-3">
-                <label for="symbol" class="form-label">Stock Symbol</label>
-                <input type="text" class="form-control" id="symbol" name="symbol" placeholder="Symbol" required>
-            </div>
-            <div class="mb-3">
-                <label for="amount" class="form-label">Number of Shares</label>
-                <input type="number" class="form-control" id="amount" name="amount" placeholder="Amount" min="1" required>
-            </div>
-            <button class="btn btn-primary" id="buyStockBtn">Buy</button>
-        </form>
-    </div>
+    <form action="/buy" method="post" id="buyForm">
+        <div class="mb-3">
+            <label for="symbol" class="form-label">Stock Symbol</label>
+            <input type="text" class="form-control" id="symbol" name="symbol" placeholder="Symbol" required>
+        </div>
+        <div class="mb-3">
+            <label for="amount" class="form-label">Number of Shares</label>
+            <input type="number" class="form-control" id="amount" name="amount" placeholder="Amount" min="1" required>
+        </div>
+        <button type="submit" class="btn btn-outline-primary" id="buyStockBtn">Buy</button>
+    </form>
+</div>
 
-    <script>
-    let debounceTimeout;
-
-    document.getElementById("symbol").addEventListener("input", function() {
-        clearTimeout(debounceTimeout);
-        var symbol = this.value;
-        symbol = symbol.toUpperCase();
-        this.value = symbol;
-        if (symbol) {
-            debounceTimeout = setTimeout(() => fetchStockPrice(symbol), 500);
-        }
-    });
-
-    function fetchStockPrice(symbol) {
-        var apiKey = "cu05qhpr01ql96gpu91gcu05qhpr01ql96gpu920";
-        var url = `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${apiKey}`;
-
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                if (data.c) {  // Finnhub current price
-                    var stockPrice = data.c;
-                    var userBalance = {{ userBalance }};
-                    var maxShares = Math.floor(userBalance / stockPrice);
-                    document.getElementById("amount").value = maxShares;
-                }
-            })
-            .catch(error => {
-                console.error("Error fetching stock price:", error);
-            });
-    }
-    </script>
 {% endblock %}

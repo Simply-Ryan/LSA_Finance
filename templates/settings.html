@@ -5,49 +5,28 @@
 {% endblock %}
 
 {% block main %}
-    <style>
-        .left_align {
-            text-align: left;
-        }
-    </style>
-
+<div class="card mx-auto" style="max-width: 600px; padding: 20px;">
     <h1>Settings</h1>
 
-    <h3 class="left_align">Profile</h3>
-    <div class="left_align">First Name: {{ profile["first_name"] }}</div>
-    <div class="left_align">Last Name: {{ profile["last_name"] }}</div>
-    <div class="left_align">Username: {{ profile["username"] }}</div>
+    <h3>Profile</h3>
+    <p>First Name: {{ profile["first_name"] }}</p>
+    <p>Last Name: {{ profile["last_name"] }}</p>
+    <p>Username: {{ profile["username"] }}</p>
 
     <br>
 
-    <h3 class="left_align">Preferences</h3>
-    
+    <h3>Preferences</h3>
+    <button class="btn btn-outline-secondary mb-3" id="theme-toggle">Toggle Theme</button>
 
     <br>
 
-    <h3 class="left_align">Other</h3>
-    <form class="left_align" action="/logout">
-        <button class="btn btn-warning" type="submit">Log Out</button>
+    <h3>Other</h3>
+    <form action="/logout" method="POST" class="mb-2">
+        <button class="btn btn-warning w-100" type="submit">Log Out</button>
     </form>
-    <br>
-    <form class="left_align" action="/delete_account">
-        <button class="btn btn-danger" type="submit">Delete Account</button>
+    <form action="/delete_account" method="POST">
+        <button class="btn btn-danger w-100" type="submit">Delete Account</button>
     </form>
+</div>
 
-    <script>
-        // THEME SECTION
-        document.getElementById('theme-toggle').addEventListener('click', function() {
-            let body = document.body;
-            if (body.classList.contains('light-mode')) {
-                body.classList.remove('light-mode');
-                body.classList.add('dark-mode');
-            } else {
-                body.classList.remove('dark-mode');
-                body.classList.add('light-mode');
-            }
-
-            // Save the preference in localStorage
-            localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
-        });
-    </script>
 {% endblock %}

@@ -5,38 +5,42 @@
 {% endblock %}
 
 {% block main %}
-    <div class="card">
-        <h1>Friends</h1>
+<div class="card p-4">
+    <h1>Friends</h1>
 
-        <div class="row mb-4">
-            <div class="col-md-12">
-                <form class="d-flex" action="/profile" method="GET">
-                    <input class="form-control me-2" type="search" placeholder="Search for users" aria-label="Search" name="username">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
-            </div>
+    <!-- Search bar -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <form class="d-flex" action="/profile" method="GET">
+                <input class="form-control me-2" type="search" placeholder="Search for users" aria-label="Search" name="username">
+                <button class="btn btn-success" type="submit">Search</button>
+            </form>
         </div>
-        {% if friends == [] %}
-            <div class="alert alert-primary" role="alert">
-                You have no friends yet. Enter someone's username above to access their profile!
-            </div>
-        {% else %}
-            <div class="row">
-                {% for friend in friends %}
-                    <div class="col-md-4">
-                        <div class="card mb-4">
-                            <img src="../static/default_pfp.jpg" class="card-img-top" alt="Profile Picture">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ friend }}</h5>
-                                <p class="card-text">Some additional info about the user.</p>
-                                <a href="" class="btn btn-danger btn-sm"><i class="fas fa-user-minus"></i> Remove</a>
-                                <a href="" class="btn btn-primary btn-sm"><i class="fas fa-envelope"></i> Message</a>
-                                <a href="" class="btn btn-success btn-sm"><i class="fas fa-user-plus"></i> Invite</a>
+    </div>
+
+    {% if friends == [] %}
+        <div class="alert alert-info" role="alert">
+            You have no friends yet. Enter someone's username above to access their profile!
+        </div>
+    {% else %}
+        <div class="row">
+            {% for friend in friends %}
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <img src="../static/default_pfp.jpg" class="card-img-top" alt="Profile Picture of {{ friend }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ friend }}</h5>
+                            <p class="card-text text-muted">Some additional info about the user.</p>
+                            <div class="d-flex justify-content-between">
+                                <a href="#" class="btn btn-danger btn-sm"><i class="fas fa-user-minus"></i> Remove</a>
+                                <a href="#" class="btn btn-primary btn-sm"><i class="fas fa-envelope"></i> Message</a>
+                                <a href="#" class="btn btn-success btn-sm"><i class="fas fa-user-plus"></i> Invite</a>
                             </div>
                         </div>
                     </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

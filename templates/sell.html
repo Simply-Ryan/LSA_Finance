@@ -5,33 +5,28 @@
 {% endblock %}
 
 {% block main %}
-    <div class="card">
-        <h1>Sell Stocks</h1>
+<div class="card mx-auto" style="max-width: 500px; padding: 20px;">
+    <h2>Sell Stocks</h2>
 
-        <form action="/sell" method="POST">
-            <div class="mb-3">
-                <label for="symbol" class="form-label">Stock Symbol</label>
-                <select class="form-select" id="symbol" name="symbol" onchange="updateShares()">
-                    {% for holding in holdings %}
-                    <option value="" selected disabled>Select a stock</option>    
+    <form action="/sell" method="POST">
+        <div class="mb-3">
+            <label for="symbol" class="form-label">Stock Symbol</label>
+            <select class="form-select" id="symbol" name="symbol" onchange="updateShares()" required>
+                <option value="" selected disabled>Select a stock</option>
+                {% for holding in holdings %}
                     <option value="{{ holding[0] }}" data-amount="{{ holding[1] }}">{{ holding[0] }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="amount" class="form-label">Number of Shares</label>
-                <input type="number" class="form-control" id="amount" name="amount" min="1" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Sell</button>
-        </form>
-    </div>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="amount" class="form-label">Number of Shares</label>
+            <input type="number" class="form-control" id="amount" name="amount" min="1" placeholder="Enter number of shares" required>
+        </div>
+        <button type="submit" class="btn btn-outline-danger w-100">Sell</button>
+    </form>
+</div>
 
-    <script>
-    function updateShares() {
-        var symbolSelect = document.getElementById("symbol");
-        var selectedOption = symbolSelect.options[symbolSelect.selectedIndex];
-        var amount = selectedOption.getAttribute("data-amount");
-        document.getElementById("amount").value = amount;
-    }
-    </script>
+<script>
+
+</script>
 {% endblock %}

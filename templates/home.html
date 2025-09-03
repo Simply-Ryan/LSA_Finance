@@ -5,81 +5,86 @@
 {% endblock %}
 
 {% block main %}
+<div class="card p-4">
+    <h1 class="mb-4"><i class="fas fa-home"></i> Home</h1>
 
-    <h1><i class="fas fa-home"></i> Home</h1>
+    <p class="mb-4"><i class="fa-solid fa-money-bill"></i> Cash Balance: <strong>{{ user_balance | usd }}</strong></p>
 
-    <br>
+    <h3 class="mb-3"><i class="fas fa-briefcase"></i> Paper Portfolio</h3>
 
-    <p><i class="fa-solid fa-money-bill"></i> Cash Balance: {{ user_balance | usd }}</p>
-
-    <br>
-
-    <h3><i class="fas fa-briefcase"></i> Paper Portfolio</h3>
-
-    <table class="table">
-        <thead>
-            <tr><th>Symbol</th><th>Amount</th><th>Unit Price</th><th>Total Price</th><th>Buy Time</th><th>Delta</th></tr>
-        </thead>
-        <tbody>
-            {% for holding in holdings %}
+    <div class="table-responsive mb-4">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
                 <tr>
-                    <td>{{ holding[0] }}</td>
-                    <td>{{ holding[1] }}</td>
-                    <td>{{ holding[2] | usd }}</td>
-                    <td>{{ holding[3] | usd }}</td>
-                    <td>{{ holding[4] }}</td>
-                    <td>{{ holding[5] | usd }}</td>
+                    <th>Symbol</th>
+                    <th>Amount</th>
+                    <th>Unit Price</th>
+                    <th>Total Price</th>
+                    <th>Buy Time</th>
+                    <th>Delta</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for holding in holdings %}
+                    <tr>
+                        <td>{{ holding[0] }}</td>
+                        <td>{{ holding[1] }}</td>
+                        <td>{{ holding[2] | usd }}</td>
+                        <td>{{ holding[3] | usd }}</td>
+                        <td>{{ holding[4] }}</td>
+                        <td>{{ holding[5] | usd }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-    <br>
-
-    <p>
-        <i class="fa-solid fa-wallet"></i> Net Portfolio Value: {{ net_value | usd }} 
+    <p class="mb-4">
+        <i class="fa-solid fa-wallet"></i> Net Portfolio Value: <strong>{{ net_value | usd }}</strong>
         {% if net_profit < 0 %}
-            <i class="fa-solid fa-circle-arrow-up" 
-               style="color: #ff526d; transform: rotate(180deg);"></i>
-            <strong style="color: #ff526d;">{{ net_profit | usd }} ({{ net_profit_percent }}%)</strong>
+            <i class="fa-solid fa-circle-arrow-up text-danger" style="transform: rotate(180deg);"></i>
+            <strong class="text-danger">{{ net_profit | usd }} ({{ net_profit_percent }}%)</strong>
         {% elif net_profit > 0 %}
-            <i class="fa-solid fa-circle-arrow-up" 
-               style="color: #00c288;"></i>
-            <strong style="color: #00c288;">{{ net_profit | usd }} ({{ net_profit_percent }}%)</strong>
+            <i class="fa-solid fa-circle-arrow-up text-success"></i>
+            <strong class="text-success">{{ net_profit | usd }} ({{ net_profit_percent }}%)</strong>
         {% else %}
-            <i class="fa-solid fa-circle-minus" 
-               style="color: #fa9933;"></i>
-            <strong style="color: #fa9933;">{{ net_profit | usd }} ({{ net_profit_percent }}%)</strong>
+            <i class="fa-solid fa-circle-minus text-warning"></i>
+            <strong class="text-warning">{{ net_profit | usd }} ({{ net_profit_percent }}%)</strong>
         {% endif %}
-    </p>    
+    </p>
 
-    <br>
+    <h3 class="mb-3"><i class="fa-solid fa-bell-concierge"></i> Requests</h3>
 
-    <h3><i class="fa-solid fa-bell-concierge"></i> Requests</h3>
-
-    <table class="table">
-        <thead>
-            <tr><th>Type</th><th>Sender</th><th>Date</th><th>Response</th></tr>
-        </thead>
-        <tbody>
-            {% for request in requests %}
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
                 <tr>
-                    <td>{{ request[1] }}</td>
-                    <td>{{ request[2] }}</td>
-                    <td>{{ request[3] }}</td>
-                    <td>
-                        <form action="/accept" method="post">
-                            <input type="hidden" name="request_id" value="{{ request[0] }}">
-                            <button class="btn btn-success" type="submit">✓</button>
-                        </form>
-                        <form action="/reject" method="post">
-                            <input type="hidden" name="request_id" value="{{ request[0] }}">
-                            <button class="btn btn-danger" type="submit">X</button>
-                        </form>
-                    </td>
+                    <th>Type</th>
+                    <th>Sender</th>
+                    <th>Date</th>
+                    <th>Response</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
+            </thead>
+            <tbody>
+                {% for request in requests %}
+                    <tr>
+                        <td>{{ request[1] }}</td>
+                        <td>{{ request[2] }}</td>
+                        <td>{{ request[3] }}</td>
+                        <td class="d-flex gap-2">
+                            <form action="/accept" method="post" class="m-0">
+                                <input type="hidden" name="request_id" value="{{ request[0] }}">
+                                <button class="btn btn-success btn-sm" type="submit">✓</button>
+                            </form>
+                            <form action="/reject" method="post" class="m-0">
+                                <input type="hidden" name="request_id" value="{{ request[0] }}">
+                                <button class="btn btn-danger btn-sm" type="submit">X</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

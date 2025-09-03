@@ -6,35 +6,40 @@
 
 {% block main %}
 
-    {% if quote["found"] == 1 %} <!-- Stock is found -->
-        <h1>{{ quote["company_name"] }} ({{ quote["symbol"] }})</h1>
+{% if quote["found"] == 1 %}
+<div class="card mx-auto" style="max-width: 800px; padding: 20px;">
+    <h1 class="mb-3">{{ quote["company_name"] }} ({{ quote["symbol"] }})</h1>
 
-        <strong>Current Price:</strong> {{ quote["price"] | usd }}
-        <br>
-        <strong>Change:</strong> {{ quote["change"] | usd }}
-        <br>
-        <strong>Percent Change:</strong> {{ quote["percent_change"] }}%
-        <br>
-        <strong>Day High/Low:</strong> {{ quote["day_high"] | usd }}/{{ quote["day_low"] | usd }}
-        
-        <br><br><br>
+    <p><strong>Current Price:</strong> {{ quote["price"] | usd }}</p>
+    <p>
+        <strong>Change:</strong> 
+        <span style="color: {% if quote['change'] < 0 %}#ff526d{% elif quote['change'] > 0 %}#00c288{% else %}#fa9933{% endif %};">
+            {{ quote["change"] | usd }}
+        </span>
+    </p>
+    <p>
+        <strong>Percent Change:</strong> 
+        <span style="color: {% if quote['percent_change'] < 0 %}#ff526d{% elif quote['percent_change'] > 0 %}#00c288{% else %}#fa9933{% endif %};">
+            {{ quote["percent_change"] }}%
+        </span>
+    </p>
+    <p><strong>Day High/Low:</strong> {{ quote["day_high"] | usd }}/{{ quote["day_low"] | usd }}</p>
 
-
-        <div class="tradingview-widget-container-wrapper">
-            <div class="tradingview-widget-container">
-                <div class="tradingview-widget-container__widget"></div>
-                <div class="tradingview-widget-copyright">
-                    <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
-                        <span class="blue-text">Track all markets on TradingView</span>
-                    </a>
-                </div>
-                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
-                    {
-                    "width": "980",
+    <div class="tradingview-widget-container-wrapper mt-4">
+        <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <div class="tradingview-widget-copyright">
+                <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
+                    <span class="blue-text">Chart by TradingView</span>
+                </a>
+            </div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+                {
+                    "width": "100%",
                     "height": "610",
                     "symbol": "{{ quote['symbol'] }}",
                     "interval": "5",
-                    "timezone": "Etc/UTC",
+                    "timezone": "exchange",
                     "theme": "dark",
                     "style": "1",
                     "locale": "en",
@@ -42,24 +47,24 @@
                     "hide_side_toolbar": false,
                     "allow_symbol_change": false,
                     "calendar": false,
-                    "support_host": "https://www.tradingview.com",
+                    "support_host": "https://www.tradingview.com"
                 }
-                </script>
-            </div>
-        </div>        
-        
+            </script>
+        </div>
+    </div>
 
-        <br><br><br>
+    <a href="/quote" class="btn btn-outline-primary mt-4">Quote Another Stock</a>
+</div>
 
-        <h5 class="graph"><a href="https://finance.yahoo.com/quote/{{ quote['symbol'] }}">Check graph</a></h5>
-        {% else %} <!-- Lookup the stock instead -->
-        <h1>Stock Lookup</h1>
-        <br>
-        {% for result in quote["results"] %}
-            <a href="/quoted?symbol={{ result['symbol'] }}"><h5>{{ result["description"] }} - {{ result["symbol"] }}</h5></a>
-        {% endfor %}
-    {% endif %}
+{% else %}
+<div class="card mx-auto" style="max-width: 500px; padding: 20px;">
+    <h1>Stock Lookup</h1>
     <br>
-    <a href="/quote" class="btn btn-primary">Quote Another Stock</a>
+    {% for result in quote["results"] %}
+        <a href="/quoted?symbol={{ result['symbol'] }}"><h5>{{ result["description"] }} - {{ result["symbol"] }}</h5></a>
+    {% endfor %}
+    <a href="/quote" class="btn btn-outline-primary mt-3">Quote Another Stock</a>
+</div>
+{% endif %}
 
 {% endblock %}

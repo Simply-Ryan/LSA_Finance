@@ -5,13 +5,15 @@
 {% endblock %}
 
 {% block main %}
-    <h1>Join a league</h1>
+<div class="card p-4">
+    <h1 class="mb-4"><i class="fas fa-users"></i> Join a League</h1>
 
     <form action="/leagues/join" method="post">
         <div class="mb-3">
-            <label for="symbol" class="form-label">League ID</label>
-            <input type="text" class="form-control" id="league_id" name="league_id" required>
+            <label for="league_id" class="form-label">League ID</label>
+            <input type="text" class="form-control" id="league_id" name="league_id" placeholder="Enter League ID" required>
         </div>
         <button type="submit" class="btn btn-primary">Join</button>
     </form>
+</div>
 {% endblock %}

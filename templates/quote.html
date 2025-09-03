@@ -5,16 +5,17 @@
 {% endblock %}
 
 {% block main %}
+<div class="card mx-auto" style="max-width: 500px; padding: 20px;">
+    <h2 class="mb-4">Stock Search</h2>
 
-    <div class="card">
-        <h2>Stock Search</h2>
-
-        <form action="/quoted" method="get">
-            <div class="mb-3">
-                <label for="symbol" class="form-label">Stock Symbol</label>
-                <input type="text" class="form-control mx-auto wx-auto" id="symbol" name="symbol" required>
+    <form action="/quoted" method="get">
+        <div class="mb-3">
+            <label for="symbol" class="form-label">Stock Symbol</label>
+            <div class="d-flex">
+                <input type="text" class="form-control" id="symbol" name="symbol" placeholder="e.g., AAPL" required>
+                <button type="submit" class="btn btn-outline-primary ms-2">Search</button>
             </div>
-            <button type="submit" class="btn btn-primary">Search</button>
-        </form>
-    </div>
+        </div>
+    </form>
+</div>
 {% endblock %}

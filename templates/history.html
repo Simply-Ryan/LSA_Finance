@@ -5,28 +5,41 @@
 {% endblock %}
 
 {% block main %}
-    <p><h2>Transaction History</h2></p>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">Type</th>
-                <th scope="col">Sender</th>
-                <th scope="col">Receiver</th>
-                <th scope="col">Symbol</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Unit Value</th>
-                <th scope="col">Total Value</th>
-                <th scope="col">Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for event in history %}
+<div class="card p-4">
+    <h2 class="mb-4">Transaction History</h2>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
                 <tr>
-                    {% for element in event %}
-                    <td>{{ element }}</td>
-                    {% endfor %}
+                    <th scope="col">Type</th>
+                    <th scope="col">Sender</th>
+                    <th scope="col">Receiver</th>
+                    <th scope="col">Symbol</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Unit Value</th>
+                    <th scope="col">Total Value</th>
+                    <th scope="col">Date</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for event in history %}
+                    <tr>
+                        {% for element in event %}
+                            {% if loop.index0 == 0 %}
+                                <td style="color: {% if element == 'Sell' %}#ff526d{% elif element == 'Buy' %}#00c288{% else %}inherit{% endif %};">
+                                    {{ element }}
+                                </td>
+                            {% elif loop.index0 == event|length - 1 %}
+                                <td class="friendly-date">{{ element }}</td>
+                            {% else %}
+                                <td>{{ element }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

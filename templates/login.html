@@ -5,34 +5,22 @@
 {% endblock %}
 
 {% block main %}
+<div class="card p-4 mx-auto" style="max-width: 500px;">
+    <h1 class="mb-4"><i class="fas fa-sign-in-alt"></i> Log In</h1>
+
     <form action="/login" method="post">
         <div class="mb-3">
-            <input autocomplete="off" autofocus class="form-control mx-auto col-6" id="username" name="username" placeholder="Username" type="text">
+            <input autocomplete="off" autofocus class="form-control" id="username" name="username" placeholder="Username" type="text" required>
         </div>
         <div class="mb-3">
-            <!-- Input Group for the password -->
-            <div class="input-group mx-auto col-6">
-                <input class="form-control" id="password" name="password" placeholder="Password" type="password">
+            <div class="input-group">
+                <input class="form-control" id="password" name="password" placeholder="Password" type="password" required>
                 <button type="button" id="togglePassword" class="input-group-text" aria-label="Show password">
-                    <i class="fa fa-eye"></i> <!-- Font Awesome Eye icon -->
+                    <i class="fa fa-eye"></i>
                 </button>
             </div>
         </div>
-        <button class="btn btn-success" type="submit">Log In</button>
+        <button class="btn btn-success w-100" type="submit">Log In</button>
     </form>
-
-    <script>
-        document.getElementById('togglePassword').addEventListener('click', function () {
-            const passwordField = document.getElementById('password');
-            const icon = this.querySelector('i');
-            
-            // Toggle the password visibility
-            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordField.setAttribute('type', type);
-            
-            // Toggle the eye icon (open and closed)
-            icon.classList.toggle('fa-eye');
-            icon.classList.toggle('fa-eye-slash');
-        });
-    </script>
+</div>
 {% endblock %}
