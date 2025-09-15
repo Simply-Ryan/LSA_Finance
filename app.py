@@ -1,5 +1,5 @@
 import sqlite3
-from flask import Flask, redirect, render_template, request, session
+from flask import Flask, redirect, render_template, url_for, flash, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import apology, using_database, login_required, check_form, lookup, usd
@@ -503,18 +503,34 @@ def profile(connected):
 def friends(connected):
     db = connected.cursor()
 
-    # Get user's friends
+    # Get user's friends (both directions)
     friends = db.execute("SELECT user2_id FROM friendships WHERE user1_id = ?", [session["user_id"]]).fetchall()
     friends += db.execute("SELECT user1_id FROM friendships WHERE user2_id = ?", [session["user_id"]]).fetchall()
 
-    # Replace IDs by usernames and filter out the current user's ID
-    friends = [list(friend) for friend in friends if friend[0] != session["user_id"]]
+    # Flatten to list of IDs, exclude self
+    friend_ids = [fid[0] for fid in friends if fid[0] != session["user_id"]]
 
-    for friend in friends:
-        user_name = db.execute("SELECT username FROM users WHERE id = ?", [friend[0]]).fetchone()
-        friend[0] = user_name[0] if user_name else "Unknown"
+    # Get usernames
+    friends_usernames = []
+    for fid in friend_ids:
+        row = db.execute("SELECT username FROM users WHERE id = ?", [fid]).fetchone()
+        if row:
+            friends_usernames.append(row[0])
+        else:
+            friends_usernames.append("Unknown")
 
-    return render_template("friends.html", friends=friends)
+    # Pending friend requests
+    requests = db.execute(
+        "SELECT id, type, sender_id FROM requests WHERE receiver_id = ? AND type = 'Friend'",
+        [session["user_id"]]
+    ).fetchall()
+    requests_list = []
+    for r in requests:
+        sender_row = db.execute("SELECT username FROM users WHERE id = ?", [r[2]]).fetchone()
+        sender_name = sender_row[0] if sender_row else "Unknown"
+        requests_list.append([r[0], r[1], sender_name])
+
+    return render_template("friends.html", friends=friends_usernames, requests=requests_list)
 
 
 @app.route("/friends/add", methods=["GET", "POST"])
@@ -530,13 +546,15 @@ def add_friend(connected):
     target_username = request.form.get("username")
     receiver_row = db.execute("SELECT id FROM users WHERE username = ?", [target_username]).fetchone()
     if not receiver_row:
-        return apology("User does not exist", 403)
+        flash("User does not exist.", "danger")
+        return redirect(url_for("home"))
 
     receiver_id = receiver_row[0]
     if receiver_id == session["user_id"]:
-        return apology("You cannot add yourself.", 403)
+        flash("You cannot add yourself.", "danger")
+        return redirect(url_for("home"))
     
-    # Check user didn't already receive request from friend
+    # Check if request already exists (from the other user)
     request_exists = db.execute(
         "SELECT id FROM requests WHERE type = ? AND sender_id = ? AND receiver_id = ?",
         ("Friend", receiver_id, session["user_id"])
@@ -545,28 +563,54 @@ def add_friend(connected):
     if request_exists:
         # If the other user already sent a request to you, auto-accept (create friendship)
         db.execute("INSERT OR IGNORE INTO friendships (user1_id, user2_id) VALUES (?, ?)", (receiver_id, session["user_id"]))
-        # Also, you might want to delete the pending reciprocal request here (optional)
         db.execute("DELETE FROM requests WHERE id = ?", (request_exists[0],))
+        flash(f"You are now friends with {target_username}!", "success")
     else:
-        # Otherwise, send a new friend request
-        # Avoid duplicate outgoing request
+        # Otherwise, check for outgoing duplicate
         outgoing_exists = db.execute(
             "SELECT id FROM requests WHERE type = ? AND sender_id = ? AND receiver_id = ?",
             ("Friend", session["user_id"], receiver_id)
         ).fetchone()
-        if not outgoing_exists:
-            db.execute("INSERT INTO requests (type, sender_id, receiver_id) VALUES (?, ?, ?)", ("Friend", session["user_id"], receiver_id))
+        if outgoing_exists:
+            flash(f"You have already sent a friend request to {target_username}.", "warning")
+        else:
+            # Create a new friend request
+            db.execute(
+                "INSERT INTO requests (type, sender_id, receiver_id) VALUES (?, ?, ?)",
+                ("Friend", session["user_id"], receiver_id)
+            )
+            flash(f"Friend request sent to {target_username}!", "success")
     
-    # Log the friend request action
+    # Log the friend request action (optional history tracking)
     db.execute(
         "INSERT INTO history (type, sender_id, receiver_id, symbol, amount, unit_value, total_value) VALUES (?, ?, ?, ?, ?, ?, ?)",
         ("FriendRequest", session["user_id"], receiver_id, "N/A", 1, 1, 1)
     )
 
     connected.commit()
+    return redirect(url_for("home"))
 
-    return redirect("/home")
+@app.route("/friends/remove", methods=["POST"])
+@login_required
+@using_database
+def remove_friend(connected):
+    db = connected.cursor()
+    username = request.form.get("username")
 
+    # Find friend ID
+    friend = db.execute("SELECT id FROM users WHERE username = ?", (username,)).fetchone()
+    if not friend:
+        return apology("User not found", 404)
+
+    friend_id = friend[0]
+    user_id = session["user_id"]
+
+    # Delete friendship both ways
+    db.execute("DELETE FROM friendships WHERE (user1_id = ? AND user2_id = ?) OR (user1_id = ? AND user2_id = ?)",
+               (user_id, friend_id, friend_id, user_id))
+    connected.commit()
+
+    return redirect("/friends")
 
 @app.route("/leagues/create", methods=["GET", "POST"])
 @login_required
@@ -588,6 +632,47 @@ def join_league(connected):
     
     # Check form validity
     # TODO
+
+@app.route("/friends/accept", methods=["POST"])
+@login_required
+@using_database
+def accept_friend(connected):
+    db = connected.cursor()
+    request_id = request.form.get("request_id")
+
+    # Get request info
+    req = db.execute("SELECT sender_id, receiver_id FROM requests WHERE id = ?", (request_id,)).fetchone()
+    if not req:
+        return apology("Request not found", 404)
+
+    sender_id, receiver_id = req
+    if receiver_id != session["user_id"]:
+        return apology("Not authorized", 403)
+
+    # Create friendship
+    db.execute("INSERT OR IGNORE INTO friendships (user1_id, user2_id) VALUES (?, ?)", (sender_id, receiver_id))
+    # Delete the request
+    db.execute("DELETE FROM requests WHERE id = ?", (request_id,))
+    connected.commit()
+
+    return redirect("/friends")
+
+
+@app.route("/friends/decline", methods=["POST"])
+@login_required
+@using_database
+def decline_friend(connected):
+    db = connected.cursor()
+    request_id = request.form.get("request_id")
+
+    req = db.execute("SELECT receiver_id FROM requests WHERE id = ?", (request_id,)).fetchone()
+    if not req or req[0] != session["user_id"]:
+        return apology("Not authorized", 403)
+
+    db.execute("DELETE FROM requests WHERE id = ?", (request_id,))
+    connected.commit()
+
+    return redirect("/friends")
 
 
 # User settings

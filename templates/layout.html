@@ -58,8 +58,8 @@
                 {% else %}
                     <!-- Guest Nav -->
                     <ul class="navbar-nav ms-auto mt-2">
-                        <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/login">Log In</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/register"><i class="fa-solid fa-user-plus"></i> Register</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/login"><i class="fa-solid fa-right-to-bracket"></i> Log In</a></li>
                     </ul>
                 {% endif %}
             </div>
@@ -67,41 +67,23 @@
     </nav>
 
     <!-- FLASH MESSAGES -->
-    {% if get_flashed_messages() %}
-        <header>
-            <div class="alert alert-primary mb-0 text-center" role="alert">
-                {{ get_flashed_messages() | join(" ") }}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mt-3">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show text-center" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
             </div>
-        </header>
-    {% endif %}
+        {% endif %}
+    {% endwith %}
 
     <!-- MAIN CONTENT -->
     <main class="container-fluid py-5 text-center">
         {% block main %}{% endblock %}
     </main>
-
-    <!-- MODAL TEMPLATE (Optional) -->
-    {# 
-    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">{% block modal_header %}{% endblock %}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    {% block modal_body %}{% endblock %}
-                </div>
-                <div class="modal-footer">
-                    {% block modal_footer %}
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
-                    {% endblock %}
-                </div>
-            </div>
-        </div>
-    </div>
-    #}
 
     <!-- FOOTER -->
     <footer class="mb-5 small text-center">

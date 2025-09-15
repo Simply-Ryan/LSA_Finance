@@ -11,9 +11,9 @@
     <!-- Search bar -->
     <div class="row mb-4">
         <div class="col-12">
-            <form class="d-flex" action="/profile" method="GET">
-                <input class="form-control me-2" type="search" placeholder="Search for users" aria-label="Search" name="username">
-                <button class="btn btn-success" type="submit">Search</button>
+            <form id="add-friend-form" class="d-flex" action="/friends/add" method="POST">
+                <input class="form-control me-2" type="search" placeholder="Search for users" aria-label="Search" name="username" required>
+                <button class="btn btn-success" type="submit">Add Friend</button>
             </form>
         </div>
     </div>
@@ -32,7 +32,7 @@
                             <h5 class="card-title">{{ friend }}</h5>
                             <p class="card-text text-muted">Some additional info about the user.</p>
                             <div class="d-flex justify-content-between">
-                                <a href="#" class="btn btn-danger btn-sm"><i class="fas fa-user-minus"></i> Remove</a>
+                                <a href="#" class="btn btn-danger btn-sm remove-friend-btn" data-friend="{{ friend }}"><i class="fas fa-user-minus"></i> Remove</a>
                                 <a href="#" class="btn btn-primary btn-sm"><i class="fas fa-envelope"></i> Message</a>
                                 <a href="#" class="btn btn-success btn-sm"><i class="fas fa-user-plus"></i> Invite</a>
                             </div>
@@ -42,5 +42,75 @@
             {% endfor %}
         </div>
     {% endif %}
+
+    {% if requests %}
+        <h2>Pending Friend Requests</h2>
+        <ul class="list-group mb-4">
+            {% for req in requests %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>{{ req[2] }} wants to be your friend</span>
+                    <div>
+                        <form action="/friends/accept" method="POST" style="display:inline;">
+                            <input type="hidden" name="request_id" value="{{ req[0] }}">
+                            <button class="btn btn-success btn-sm">Accept</button>
+                        </form>
+                        <form action="/friends/decline" method="POST" style="display:inline;">
+                            <input type="hidden" name="request_id" value="{{ req[0] }}">
+                            <button class="btn btn-danger btn-sm">Decline</button>
+                        </form>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 </div>
+
+<!-- Friend Request Sent Modal -->
+<div class="modal fade" id="friendRequestSentModal" tabindex="-1" aria-labelledby="friendRequestSentLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="friendRequestSentLabel">Friend Request Sent</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Your friend request has been sent successfully!
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const addFriendForm = document.getElementById("add-friend-form");
+
+    addFriendForm.addEventListener("submit", function (e) {
+        e.preventDefault(); // prevent normal form submission
+
+        const formData = new FormData(addFriendForm);
+
+        fetch(addFriendForm.action, {
+            method: "POST",
+            body: formData
+        })
+        .then(response => {
+            if (response.ok) {
+                // show confirmation modal
+                const modal = new bootstrap.Modal(document.getElementById("friendRequestSentModal"));
+                modal.show();
+                addFriendForm.reset();
+            } else {
+                alert("Error sending friend request.");
+            }
+        })
+        .catch(() => alert("Network error while sending friend request."));
+    });
+});
+</script>
 {% endblock %}

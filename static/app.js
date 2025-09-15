@@ -133,6 +133,25 @@ function formatFriendlyDates() {
 }
 
 // =====================
+// FRIEND REMOVE MODAL
+// =====================
+document.addEventListener('DOMContentLoaded', function () {
+    const removeModal = document.getElementById('confirmRemoveModal');
+    if (removeModal) {
+        removeModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const username = button.getAttribute('data-username');
+
+            const friendName = removeModal.querySelector('#friendName');
+            const friendUsernameInput = removeModal.querySelector('#friendUsername');
+
+            friendName.textContent = username;
+            friendUsernameInput.value = username;
+        });
+    }
+});
+
+// =====================
 // DOCUMENT READY
 // =====================
 document.addEventListener("DOMContentLoaded", function () {
