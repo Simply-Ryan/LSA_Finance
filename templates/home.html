@@ -27,7 +27,7 @@
             <tbody>
                 {% for holding in holdings %}
                     <tr>
-                        <td>{{ holding[0] }}</td>
+                        <td><a href="/quoted?symbol={{ holding[0] }}">{{ holding[0] }}</a></td>
                         <td>{{ holding[1] }}</td>
                         <td>{{ holding[2] | usd }}</td>
                         <td>{{ holding[3] | usd }}</td>
